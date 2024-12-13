@@ -3,7 +3,7 @@ import { BorderTrail } from "@/components/core/border-trail";
 import { ContentBlock } from "@/types/chat";
 import { cn } from "@/utils/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Pencil, Send } from "lucide-react";
 import { useState } from "react";
 import Markdown from "react-markdown";
 import rehypeMathjax from "rehype-mathjax";
@@ -60,6 +60,8 @@ export function ContentBlockDisplay({
         className={cn(
           "relative rounded-lg border border-border bg-background",
           "overflow-hidden",
+          "dark:bg-gray-900",
+          "border-gradient-to-r from-purple-500 to-green-500"
         )}
       >
         {isLoading && (

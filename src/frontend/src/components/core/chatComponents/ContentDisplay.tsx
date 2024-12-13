@@ -257,10 +257,14 @@ export default function ContentDisplay({
   }
 
   return (
-    <div className="relative p-[16px]">
+    <div className="relative p-[16px] dark:bg-gray-900 border-gradient-to-r from-purple-500 to-green-500">
       {renderHeader}
       {renderDuration}
       {contentData}
+      <div className="flex items-center gap-2 mt-4">
+        <ForwardedIconComponent name="Pencil" className="h-4 w-4" />
+        <ForwardedIconComponent name="Send" className="h-4 w-4" />
+      </div>
     </div>
   );
 }

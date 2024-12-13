@@ -68,6 +68,14 @@ Star Langflow on GitHub to be instantly notified of new releases.
 
 We welcome contributions from developers of all levels. If you'd like to contribute, please check our [contributing guidelines](./CONTRIBUTING.md) and help make Langflow more accessible.
 
+## 📚 Documentation
+
+For detailed information on how to use Langflow, refer to the [Langflow Documentation](https://docs.langflow.org).
+
+### Prompt Guide for LLMs
+
+For a detailed guide on how to build JSON files for Langflow components using prompts, refer to the [Prompt Guide for LLMs](https://docs.langflow.org/prompt-guide).
+
 ---
 
 [![Star History Chart](https://api.star-history.com/svg?repos=langflow-ai/langflow&type=Timeline)](https://star-history.com/#langflow-ai/langflow&Date)
