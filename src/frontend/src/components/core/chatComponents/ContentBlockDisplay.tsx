@@ -5,15 +5,15 @@ import { cn } from "@/utils/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { useState } from "react";
-import Markdown from "react-markdown";
+import Markdown from "react-markdown";  s
 import rehypeMathjax from "rehype-mathjax";
 import remarkGfm from "remark-gfm";
 import ForwardedIconComponent from "../../common/genericIconComponent";
 import { Separator } from "../../ui/separator";
 import ContentDisplay from "./ContentDisplay";
 import DurationDisplay from "./DurationDisplay";
-import { useAIInteraction } from "@/hooks/useAIInteraction"; // Import custom hook for AI interaction
-import { useVoiceCommunication } from "@/hooks/useVoiceCommunication"; // Import custom hook for voice communication
+import { useAIInteraction } from "@/hooks/useAIInteraction"; // Updated import path
+import { useVoiceCommunication } from "@/hooks/useVoiceCommunication"; // Updated import path
 
 interface ContentBlockDisplayProps {
   contentBlocks: ContentBlock[];
