@@ -31,6 +31,8 @@ import IOFieldView from "./components/IOFieldView";
 import SessionSelector from "./components/IOFieldView/components/sessionSelector";
 import SessionView from "./components/SessionView";
 import ChatView from "./components/chatView";
+import { useAIInteraction } from "@/hooks/useAIInteraction"; // Import custom hook for AI interaction
+import { useVoiceCommunication } from "@/hooks/useVoiceCommunication"; // Import custom hook for voice communication
 
 export default function IOModal({
   children,
@@ -224,6 +226,10 @@ export default function IOModal({
       setPlaygroundScrollBehaves("instant");
     }
   }, [open]);
+
+  // Use custom hooks for AI interaction and voice communication
+  const { interactWithAI } = useAIInteraction();
+  const { startVoiceCommunication, stopVoiceCommunication } = useVoiceCommunication();
 
   return (
     <BaseModal
@@ -522,6 +528,9 @@ export default function IOModal({
                     lockChat={lockChat}
                     setLockChat={setLockChat}
                     visibleSession={visibleSession}
+                    interactWithAI={interactWithAI} // Pass AI interaction function
+                    startVoiceCommunication={startVoiceCommunication} // Pass voice communication functions
+                    stopVoiceCommunication={stopVoiceCommunication} // Pass voice communication functions
                   />
                 ) : (
                   <span className="flex h-full w-full items-center justify-center font-thin text-muted-foreground">

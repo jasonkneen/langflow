@@ -12,6 +12,8 @@ import ForwardedIconComponent from "../../common/genericIconComponent";
 import { Separator } from "../../ui/separator";
 import ContentDisplay from "./ContentDisplay";
 import DurationDisplay from "./DurationDisplay";
+import { useAIInteraction } from "@/hooks/useAIInteraction"; // Import custom hook for AI interaction
+import { useVoiceCommunication } from "@/hooks/useVoiceCommunication"; // Import custom hook for voice communication
 
 interface ContentBlockDisplayProps {
   contentBlocks: ContentBlock[];
@@ -47,6 +49,10 @@ export function ContentBlockDisplay({
     state === "partial" ? (lastContent?.header?.title ?? "Steps") : "Finished";
   // show the block title only if state === "partial"
   const showBlockTitle = state === "partial";
+
+  // Use custom hooks for AI interaction and voice communication
+  const { interactWithAI } = useAIInteraction();
+  const { startVoiceCommunication, stopVoiceCommunication } = useVoiceCommunication();
 
   return (
     <div className="relative py-3">
@@ -197,6 +203,9 @@ export function ContentBlockDisplay({
                         <ContentDisplay
                           content={content}
                           chatId={`${chatId}-${index}`}
+                          interactWithAI={interactWithAI} // Pass AI interaction function
+                          startVoiceCommunication={startVoiceCommunication} // Pass voice communication functions
+                          stopVoiceCommunication={stopVoiceCommunication} // Pass voice communication functions
                         />
                       </motion.div>
                     ))}
