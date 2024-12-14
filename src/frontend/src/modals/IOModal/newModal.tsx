@@ -490,6 +490,24 @@ export default function IOModal({
                   Select an IO component to view
                 </span>
               )}
+              <div className="flex items-center gap-2 p-4 bg-gray-800 rounded-lg">
+                <input
+                  type="text"
+                  placeholder="Revise..."
+                  className="flex-grow p-2 bg-gray-700 text-white rounded-lg"
+                  value={chatValue}
+                  onChange={(e) => setChatValue(e.target.value)}
+                />
+                <button className="p-2 bg-gray-700 text-white rounded-lg">
+                  <IconComponent name="Pencil" className="h-5 w-5" />
+                </button>
+                <button
+                  className="p-2 bg-gray-700 text-white rounded-lg"
+                  onClick={() => sendMessage({ repeat: 1 })}
+                >
+                  <IconComponent name="Send" className="h-5 w-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>

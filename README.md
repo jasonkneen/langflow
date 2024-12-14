@@ -75,3 +75,25 @@ We welcome contributions from developers of all levels. If you'd like to contrib
 ## ❤️ Contributors
 
 [![langflow contributors](https://contrib.rocks/image?repo=langflow-ai/langflow)](https://github.com/langflow-ai/langflow/graphs/contributors)
+
+## 🗣️ Chat Interface
+
+Langflow now includes a chat interface that allows you to interact with AI for creating and updating JSON files for components or flows in real-time. It also supports two-way voice communication using local TTS/STT or OpenAI live.
+
+### How to Use the Chat Interface
+
+1. **Open the Chat Interface:**
+   - Navigate to the chat interface in the application.
+
+2. **Create or Update JSON Files:**
+   - You can ask the AI to create components or flows, and it will generate the JSON files that you can import directly.
+   - You can also request flow changes, and the AI will update the flow in real-time.
+
+3. **Two-Way Voice Communication:**
+   - Enable two-way voice communication using either local TTS/STT or OpenAI live.
+   - Start a voice session and interact with the AI using your voice.
+
+4. **Real-Time Updates:**
+   - The chat interface supports real-time updates and interactions with the AI for flow changes.
+
+OK How do I see this interface?
