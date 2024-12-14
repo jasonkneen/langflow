@@ -6,13 +6,21 @@ import remarkGfm from "remark-gfm";
 import ForwardedIconComponent from "../../common/genericIconComponent";
 import SimplifiedCodeTabComponent from "../codeTabsComponent/ChatCodeTabComponent";
 import DurationDisplay from "./DurationDisplay";
+import { useAIInteraction } from "@/hooks/useAIInteraction"; // Import custom hook for AI interaction
+import { useVoiceCommunication } from "@/hooks/useVoiceCommunication"; // Import custom hook for voice communication
 
 export default function ContentDisplay({
   content,
   chatId,
+  interactWithAI, // Add AI interaction function
+  startVoiceCommunication, // Add voice communication functions
+  stopVoiceCommunication, // Add voice communication functions
 }: {
   content: ContentType;
   chatId: string;
+  interactWithAI: (input: string) => Promise<string>; // Add AI interaction function type
+  startVoiceCommunication: () => void; // Add voice communication function type
+  stopVoiceCommunication: () => void; // Add voice communication function type
 }) {
   // First render the common BaseContent elements if they exist
   const renderHeader = content.header && (
@@ -257,7 +265,7 @@ export default function ContentDisplay({
   }
 
   return (
-    <div className="relative p-[16px]">
+    <div className="relative p-[16px] dark:bg-gray-900 border-gradient-to-r from-purple-400 via-pink-500 to-red-500">
       {renderHeader}
       {renderDuration}
       {contentData}

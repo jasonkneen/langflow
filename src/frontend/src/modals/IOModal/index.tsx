@@ -31,6 +31,8 @@ import IOFieldView from "./components/IOFieldView";
 import SessionSelector from "./components/IOFieldView/components/sessionSelector";
 import SessionView from "./components/SessionView";
 import ChatView from "./components/chatView";
+import { useAIInteraction } from "@/hooks/useAIInteraction"; // Import custom hook for AI interaction
+import { useVoiceCommunication } from "@/hooks/useVoiceCommunication"; // Import custom hook for voice communication
 
 export default function IOModal({
   children,
@@ -224,6 +226,10 @@ export default function IOModal({
       setPlaygroundScrollBehaves("instant");
     }
   }, [open]);
+
+  // Use custom hooks for AI interaction and voice communication
+  const { interactWithAI } = useAIInteraction();
+  const { startVoiceCommunication, stopVoiceCommunication } = useVoiceCommunication();
 
   return (
     <BaseModal
@@ -522,6 +528,9 @@ export default function IOModal({
                     lockChat={lockChat}
                     setLockChat={setLockChat}
                     visibleSession={visibleSession}
+                    interactWithAI={interactWithAI} // Pass AI interaction function
+                    startVoiceCommunication={startVoiceCommunication} // Pass voice communication functions
+                    stopVoiceCommunication={stopVoiceCommunication} // Pass voice communication functions
                   />
                 ) : (
                   <span className="flex h-full w-full items-center justify-center font-thin text-muted-foreground">
@@ -553,6 +562,24 @@ export default function IOModal({
       ) : (
         <></>
       )}
+      <div className="flex items-center gap-2 p-4 bg-gray-800 rounded-lg">
+        <input
+          type="text"
+          placeholder="Revise..."
+          className="flex-grow p-2 bg-gray-700 text-white rounded-lg"
+          value={chatValue}
+          onChange={(e) => setChatValue(e.target.value)}
+        />
+        <button className="p-2 bg-gray-700 text-white rounded-lg">
+          <IconComponent name="Pencil" className="h-5 w-5" />
+        </button>
+        <button
+          className="p-2 bg-gray-700 text-white rounded-lg"
+          onClick={() => sendMessage({ repeat: 1 })}
+        >
+          <IconComponent name="Send" className="h-5 w-5" />
+        </button>
+      </div>
     </BaseModal>
   );
 }
