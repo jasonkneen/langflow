@@ -3,6 +3,7 @@ import DataStaxLogo from "@/assets/DataStaxLogo.svg?react";
 import LangflowLogo from "@/assets/LangflowLogo.svg?react";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
+import ChatTrigger from "@/components/common/viewTriggers/chat";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CustomOrgSelector } from "@/customization/components/custom-org-selector";
@@ -18,7 +19,6 @@ import { useEffect, useRef, useState } from "react";
 import { AccountMenu } from "./components/AccountMenu";
 import FlowMenu from "./components/FlowMenu";
 import GithubStarComponent from "./components/GithubStarButton";
-import ChatTrigger from "@/components/common/viewTriggers/chat";
 
 export default function AppHeader(): JSX.Element {
   const notificationCenter = useAlertStore((state) => state.notificationCenter);
