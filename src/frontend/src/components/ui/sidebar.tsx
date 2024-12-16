@@ -28,6 +28,8 @@ type SidebarContext = {
   setOpen: (open: boolean) => void;
   toggleSidebar: () => void;
   defaultOpen: boolean;
+  aiChatOpen: boolean;
+  setAIChatOpen: (open: boolean) => void;
 };
 
 const SidebarContext = React.createContext<SidebarContext | null>(null);
@@ -88,6 +90,9 @@ const SidebarProvider = React.forwardRef<
       return setOpen((open) => !open);
     }, [setOpen, open]);
 
+    // State for AI Chat
+    const [aiChatOpen, setAIChatOpen] = React.useState(false);
+
     // We add a state so that we can do data-state="expanded" or "collapsed".
     // This makes it easier to style the sidebar with Tailwind classes.
     const state = open ? "expanded" : "collapsed";
@@ -99,8 +104,10 @@ const SidebarProvider = React.forwardRef<
         setOpen,
         toggleSidebar,
         defaultOpen,
+        aiChatOpen,
+        setAIChatOpen,
       }),
-      [state, open, setOpen, toggleSidebar, defaultOpen],
+      [state, open, setOpen, toggleSidebar, defaultOpen, aiChatOpen],
     );
 
     const toggleSidebarShortcut = useShortcutsStore(
@@ -744,6 +751,47 @@ const SidebarMenuSubButton = React.forwardRef<
 });
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton";
 
+const SidebarAIChat = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div">
+>(({ className, ...props }, ref) => {
+  const { aiChatOpen, setAIChatOpen } = useSidebar();
+
+  return (
+    <div
+      ref={ref}
+      data-sidebar="ai-chat"
+      className={cn(
+        "fixed right-0 top-0 h-full w-[--sidebar-width] bg-background shadow-lg transition-transform duration-200 ease-linear",
+        aiChatOpen ? "translate-x-0" : "translate-x-full",
+        className,
+      )}
+      {...props}
+    >
+      <div className="flex h-full flex-col p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold">AI Chat Co-Pilot</h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setAIChatOpen(false)}
+          >
+            <PanelLeft />
+          </Button>
+        </div>
+        <div className="flex-1 overflow-auto">
+          {/* AI chat interface content goes here */}
+        </div>
+        <div className="mt-4">
+          <Input placeholder="Ask something..." />
+          <Button className="mt-2 w-full">Send</Button>
+        </div>
+      </div>
+    </div>
+  );
+});
+SidebarAIChat.displayName = "SidebarAIChat";
+
 export {
   Sidebar,
   SidebarContent,
@@ -768,5 +816,6 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
+  SidebarAIChat,
   useSidebar,
 };

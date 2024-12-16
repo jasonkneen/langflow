@@ -665,3 +665,34 @@ async def get_config():
         }
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
+
+
+@router.get("/export/{flow_id}", response_model=dict)
+async def export_flow_as_python(
+    flow: Annotated[Flow, Depends(get_flow_by_id_or_endpoint_name)],
+    user: Annotated[User, Depends(get_user_by_flow_id_or_endpoint_name)],
+):
+    """Export the full flow as a single Python file.
+
+    Args:
+        flow (Flow): The flow to be exported.
+        user (User): The flow user.
+
+    Returns:
+        dict: A dictionary containing the exported Python code.
+
+    Raises:
+        HTTPException: If the flow is not found or if there is an error during export.
+    """
+    try:
+        if flow.data is None:
+            msg = f"Flow {flow.id} has no data"
+            raise HTTPException(status_code=404, detail=msg)
+
+        graph = Graph.from_payload(flow.data, flow_id=str(flow.id), user_id=str(user.id))
+        python_code = graph.to_python_code()
+
+        return {"python_code": python_code}
+
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
