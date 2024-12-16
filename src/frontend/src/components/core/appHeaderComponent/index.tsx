@@ -18,6 +18,7 @@ import { useEffect, useRef, useState } from "react";
 import { AccountMenu } from "./components/AccountMenu";
 import FlowMenu from "./components/FlowMenu";
 import GithubStarComponent from "./components/GithubStarButton";
+import ChatTrigger from "@/components/common/viewTriggers/chat";
 
 export default function AppHeader(): JSX.Element {
   const notificationCenter = useAlertStore((state) => state.notificationCenter);
@@ -205,6 +206,7 @@ export default function AppHeader(): JSX.Element {
         <div className="flex">
           <AccountMenu />
         </div>
+        <ChatTrigger />
       </div>
     </div>
   );
