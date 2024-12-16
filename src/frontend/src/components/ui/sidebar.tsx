@@ -826,6 +826,8 @@ SidebarAIChatTrigger.displayName = "SidebarAIChatTrigger";
 
 export {
   Sidebar,
+  SidebarAIChat,
+  SidebarAIChatTrigger,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
@@ -848,7 +850,5 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
-  SidebarAIChat,
-  SidebarAIChatTrigger,
   useSidebar,
 };
