@@ -792,6 +792,38 @@ const SidebarAIChat = React.forwardRef<
 });
 SidebarAIChat.displayName = "SidebarAIChat";
 
+const SidebarAIChatTrigger = React.forwardRef<
+  React.ElementRef<typeof Button>,
+  React.ComponentProps<typeof Button>
+>(({ className, onClick, ...props }, ref) => {
+  const { setAIChatOpen } = useSidebar();
+
+  return (
+    <Button
+      ref={ref}
+      data-sidebar="ai-chat-trigger"
+      variant="ghost"
+      size="icon"
+      className={cn("h-7 w-7 text-muted-foreground", className)}
+      onClick={(event) => {
+        onClick?.(event);
+        setAIChatOpen(true);
+      }}
+      {...props}
+    >
+      {props.children ? (
+        props.children
+      ) : (
+        <>
+          <PanelLeft />
+          <span className="sr-only">Open AI Chat Co-Pilot</span>
+        </>
+      )}
+    </Button>
+  );
+});
+SidebarAIChatTrigger.displayName = "SidebarAIChatTrigger";
+
 export {
   Sidebar,
   SidebarContent,
@@ -817,5 +849,6 @@ export {
   SidebarSeparator,
   SidebarTrigger,
   SidebarAIChat,
+  SidebarAIChatTrigger,
   useSidebar,
 };
