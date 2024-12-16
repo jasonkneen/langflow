@@ -3,6 +3,7 @@ import DataStaxLogo from "@/assets/DataStaxLogo.svg?react";
 import LangflowLogo from "@/assets/LangflowLogo.svg?react";
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import ShadTooltip from "@/components/common/shadTooltipComponent";
+import ChatTrigger from "@/components/common/viewTriggers/chat";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { CustomOrgSelector } from "@/customization/components/custom-org-selector";
@@ -205,6 +206,7 @@ export default function AppHeader(): JSX.Element {
         <div className="flex">
           <AccountMenu />
         </div>
+        <ChatTrigger />
       </div>
     </div>
   );
