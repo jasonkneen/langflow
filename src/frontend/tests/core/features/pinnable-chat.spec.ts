@@ -15,7 +15,9 @@ test("pinnable chat functionality", { tag: ["@release"] }, async ({ page }) => {
   // Test chat functionality while pinned
   await page.getByTestId("input-chat-playground").fill("test message");
   await page.keyboard.press("Enter");
-  await expect(page.getByTestId("chat-message-User-test message")).toBeVisible();
+  await expect(
+    page.getByTestId("chat-message-User-test message"),
+  ).toBeVisible();
 
   // Test flow interaction while chat is pinned
   await page.getByTestId("flow-page").click();
