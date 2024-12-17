@@ -13,4 +13,6 @@ export type MessagesStoreType = {
   removeMessages: (ids: string[]) => void;
   deleteSession: (id: string) => void;
   displayLoadingMessage: boolean;
+  isPinned: boolean;
+  setPinned: (isPinned: boolean) => void;
 };

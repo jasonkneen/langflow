@@ -3,6 +3,7 @@ import { MessagesStoreType } from "../types/zustand/messages";
 
 export const useMessagesStore = create<MessagesStoreType>((set, get) => ({
   displayLoadingMessage: false,
+  isPinned: false,
   deleteSession: (id) => {
     set((state) => {
       const updatedMessages = state.messages.filter(
@@ -85,5 +86,8 @@ export const useMessagesStore = create<MessagesStoreType>((set, get) => ({
         reject(error);
       }
     });
+  },
+  setPinned: (isPinned: boolean) => {
+    set(() => ({ isPinned }));
   },
 }));
