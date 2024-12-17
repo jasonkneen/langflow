@@ -1,5 +1,6 @@
 import { DefaultEdge } from "@/CustomEdges";
 import NoteNode from "@/CustomNodes/NoteNode";
+import { useMessagesStore } from "@/stores/messagesStore";
 
 import ForwardedIconComponent from "@/components/common/genericIconComponent";
 import LoadingComponent from "@/components/common/loadingComponent";
@@ -82,6 +83,7 @@ export default function Page({ view }: { view?: boolean }): JSX.Element {
   const uploadFlow = useUploadFlow();
   const autoSaveFlow = useAutoSaveFlow();
   const types = useTypesStore((state) => state.types);
+  const isPinned = useMessagesStore((state) => state.isPinned);
   const templates = useTypesStore((state) => state.templates);
   const setFilterEdge = useFlowStore((state) => state.setFilterEdge);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -518,7 +520,7 @@ export default function Page({ view }: { view?: boolean }): JSX.Element {
   const componentsToUpdate = useFlowStore((state) => state.componentsToUpdate);
 
   return (
-    <div className="h-full w-full bg-canvas" ref={reactFlowWrapper}>
+    <div className={cn("h-full w-full bg-canvas transition-all duration-300", isPinned ? "mr-[690px]" : "")} ref={reactFlowWrapper}>
       {showCanvas ? (
         <div id="react-flow-id" className="h-full w-full bg-canvas">
           <ReactFlow

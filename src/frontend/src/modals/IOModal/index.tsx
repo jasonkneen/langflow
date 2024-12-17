@@ -66,6 +66,8 @@ export default function IOModal({
   const setSuccessData = useAlertStore((state) => state.setSuccessData);
   const deleteSession = useMessagesStore((state) => state.deleteSession);
   const currentFlowId = useFlowsManagerStore((state) => state.currentFlowId);
+  const isPinned = useMessagesStore((state) => state.isPinned);
+  const setPinned = useMessagesStore((state) => state.setPinned);
 
   const { mutate: deleteSessionFunction } = useDeleteMessages();
   const [visibleSession, setvisibleSession] = useState<string | undefined>(
@@ -230,20 +232,37 @@ export default function IOModal({
       open={open}
       setOpen={setOpen}
       disable={disable}
-      type={isPlayground ? "modal" : undefined}
+      type={isPlayground && !isPinned ? "modal" : undefined}
       onSubmit={() => sendMessage({ repeat: 1 })}
       size="x-large"
+      className={cn(
+        "transition-all duration-300",
+        isPinned ? "fixed right-0 top-0 h-full w-[690px] border-l bg-background shadow-lg" : ""
+      )}
     >
       <BaseModal.Trigger>{children}</BaseModal.Trigger>
       {/* TODO ADAPT TO ALL TYPES OF INPUTS AND OUTPUTS */}
       <BaseModal.Header description={CHAT_FORM_DIALOG_SUBTITLE}>
-        <div className="flex items-center">
-          <span className="pr-2">Playground</span>
-          <IconComponent
-            name="BotMessageSquareIcon"
-            className="h-6 w-6 pl-1 text-foreground"
-            aria-hidden="true"
-          />
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center">
+            <span className="pr-2">Playground</span>
+            <IconComponent
+              name="BotMessageSquareIcon"
+              className="h-6 w-6 pl-1 text-foreground"
+              aria-hidden="true"
+            />
+          </div>
+          <button
+            onClick={() => setPinned(!isPinned)}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            aria-label={isPinned ? "Unpin chat" : "Pin chat"}
+          >
+            <IconComponent
+              name={isPinned ? "PinOff" : "Pin"}
+              className="h-5 w-5"
+              aria-hidden="true"
+            />
+          </button>
         </div>
       </BaseModal.Header>
       <BaseModal.Content overflowHidden>
