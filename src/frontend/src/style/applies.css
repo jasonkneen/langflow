@@ -767,13 +767,18 @@
   .chat-modal-input {
     @apply relative mt-1 w-full rounded-md shadow-sm;
   }
+  .chat-modal-pinned {
+    @apply fixed right-0 top-0 h-full w-[690px] border-l bg-background shadow-lg transition-all duration-300;
+  }
+  .chat-modal-pinned .chat-modal-dialog-panel {
+    @apply h-full rounded-none shadow-none transition-all duration-300;
+  }
   .code-area-modal-editor-div {
     @apply flex-max-width mt-2 h-full;
   }
   .code-area-modal-editor-box {
     @apply h-[300px] w-full rounded-lg border border-ring custom-scroll;
   }
-
   .edit-node-modal-variable {
     @apply h-5 w-5 stroke-2 pe-1 text-muted-foreground;
   }

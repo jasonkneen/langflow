@@ -1,6 +1,4 @@
-import { ReactNode, useEffect } from "react";
-
-import React from "react";
+import React, { ReactNode, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../components/ui/dialog";
+import { useMessagesStore } from "../../stores/messagesStore";
 
 import {
   Dialog as Modal,
@@ -193,6 +192,7 @@ function BaseModal({
   onSubmit,
   onEscapeKeyDown,
 }: BaseModalProps) {
+  const isPinned = useMessagesStore((state) => state.isPinned);
   const headerChild = React.Children.toArray(children).find(
     (child) => (child as React.ReactElement).type === Header,
   );
@@ -233,14 +233,14 @@ function BaseModal({
   return (
     <>
       {type === "modal" ? (
-        <Modal open={open} onOpenChange={setOpen}>
+        <Modal open={open && !isPinned} onOpenChange={setOpen}>
           {triggerChild}
           <ModalContent className={contentClasses}>{modalContent}</ModalContent>
         </Modal>
       ) : type === "full-screen" ? (
         <div className="min-h-full w-full flex-1">{modalContent}</div>
       ) : (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open && !isPinned} onOpenChange={setOpen}>
           {triggerChild}
           <DialogContent
             onOpenAutoFocus={(event) => event.preventDefault()}
