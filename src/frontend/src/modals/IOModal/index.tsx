@@ -237,7 +237,9 @@ export default function IOModal({
       size="x-large"
       className={cn(
         "transition-all duration-300",
-        isPinned ? "fixed right-0 top-0 h-full w-[690px] border-l bg-background shadow-lg" : ""
+        isPinned
+          ? "fixed right-0 top-0 h-full w-[690px] border-l bg-background shadow-lg"
+          : "",
       )}
     >
       <BaseModal.Trigger>{children}</BaseModal.Trigger>
