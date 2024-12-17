@@ -520,7 +520,13 @@ export default function Page({ view }: { view?: boolean }): JSX.Element {
   const componentsToUpdate = useFlowStore((state) => state.componentsToUpdate);
 
   return (
-    <div className={cn("h-full w-full bg-canvas transition-all duration-300", isPinned ? "mr-[690px]" : "")} ref={reactFlowWrapper}>
+    <div
+      className={cn(
+        "h-full w-full bg-canvas transition-all duration-300",
+        isPinned ? "mr-[690px]" : "",
+      )}
+      ref={reactFlowWrapper}
+    >
       {showCanvas ? (
         <div id="react-flow-id" className="h-full w-full bg-canvas">
           <ReactFlow
