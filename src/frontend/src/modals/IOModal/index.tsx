@@ -243,7 +243,7 @@ export default function IOModal({
       <BaseModal.Trigger>{children}</BaseModal.Trigger>
       {/* TODO ADAPT TO ALL TYPES OF INPUTS AND OUTPUTS */}
       <BaseModal.Header description={CHAT_FORM_DIALOG_SUBTITLE}>
-        <div className="flex items-center justify-between w-full">
+        <div className="flex w-full items-center justify-between">
           <div className="flex items-center">
             <span className="pr-2">Playground</span>
             <IconComponent
@@ -254,7 +254,7 @@ export default function IOModal({
           </div>
           <button
             onClick={() => setPinned(!isPinned)}
-            className="text-muted-foreground hover:text-foreground transition-colors"
+            className="text-muted-foreground transition-colors hover:text-foreground"
             aria-label={isPinned ? "Unpin chat" : "Pin chat"}
           >
             <IconComponent

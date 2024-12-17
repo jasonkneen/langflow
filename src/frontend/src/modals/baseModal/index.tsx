@@ -1,6 +1,4 @@
-import { ReactNode, useEffect } from "react";
-import { useMessagesStore } from "../../stores/messagesStore";
-import React from "react";
+import React, { ReactNode, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +7,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../components/ui/dialog";
+import { useMessagesStore } from "../../stores/messagesStore";
 
 import {
   Dialog as Modal,
