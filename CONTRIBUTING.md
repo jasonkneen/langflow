@@ -31,6 +31,20 @@ so that more people can benefit from it.
   [collapses the content](https://developer.mozilla.org/en/docs/Web/HTML/Element/details)
   so it only becomes visible on click, making the issue easier to read and follow.
 
+## Suggesting Improvements
+
+We welcome suggestions for improvements to Langflow! To suggest an improvement, please follow these guidelines:
+
+1. **Check for existing suggestions:** Before submitting a new suggestion, please check the [GitHub issues](https://github.com/langflow-ai/langflow/issues) page to see if someone else has already suggested it. If you find a similar suggestion, feel free to add your thoughts or support to it.
+
+2. **Provide a clear description:** Clearly describe the improvement you are suggesting. Explain why you think it would be beneficial and how it could enhance Langflow. Be as specific as possible.
+
+3. **Include examples:** If applicable, provide examples or use cases that demonstrate the improvement. This helps us understand the context and potential impact of the suggestion.
+
+4. **Be respectful and constructive:** We value respectful and constructive feedback. Please be considerate and provide suggestions in a positive and collaborative manner.
+
+To submit a suggestion, you can create a new issue on the [GitHub issues](https://github.com/langflow-ai/langflow/issues) page and use the "Suggestion" label.
+
 ## Contributing code and documentation
 
 You can develop Langflow locally and contribute to the Project!
