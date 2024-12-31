@@ -19,10 +19,11 @@ app.use((req, res, next) => {
 });
 
 app.use(cors({
-  origin: '*',
+  origin: ['http://localhost:3001', 'https://langflow-node-backend-tunnel-mot33wzx.devinapps.com'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['WWW-Authenticate']
 }));
 app.use(express.json());
 
