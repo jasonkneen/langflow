@@ -9,15 +9,23 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  base: '/',
   server: {
     host: '0.0.0.0',
     port: 5173,
     proxy: {
       '/api/v1': {
-        target: 'https://user:27b101b130869c544b40d504b5c10fd5@langflow-node-backend-tunnel-6vw0k3kd.devinapps.com',
+        target: 'https://langflow-node-backend-tunnel-5dchn7qw.devinapps.com',
         changeOrigin: true,
-        secure: true
+        secure: true,
+        headers: {
+          'Authorization': 'Basic ' + Buffer.from('user:d85f131ca9292ff559b9f941a96a3374').toString('base64')
+        }
       }
+    },
+    hmr: {
+      clientPort: 443,
+      protocol: 'wss'
     }
   }
 });
