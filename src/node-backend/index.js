@@ -3,7 +3,10 @@ const cors = require("cors");
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['https://langflow-node-backend-tunnel-1ghymn56.devinapps.com', 'http://localhost:3000'],
+  credentials: true
+}));
 app.use(express.json());
 
 // Base API path
@@ -65,7 +68,7 @@ app.get(`${API_BASE}/flows`, (req, res) => {
 app.post(`${API_BASE}/flows`, (req, res) => {
   const flow = createFlow(req.body);
   flows.set(flow.id, flow);
-  res.json(flow);
+  res.status(201).json(flow);
 });
 
 // GET /api/v1/flows/{id} - Get specific flow
@@ -188,7 +191,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 7860; // Match the proxy target port
+const PORT = process.env.PORT || 3001; // Match the frontend config port
 app.listen(PORT, () => {
   console.log(`Node.js backend running on port ${PORT}`);
 });

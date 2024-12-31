@@ -1,49 +1,118 @@
+const BaseNode = require('./baseNode');
+
 /**
- * ES Module node implementation
+ * Node type for ES6 modules
  */
-class ESModuleNode {
+class ESModuleNode extends BaseNode {
   constructor() {
-    this.type = 'esmodule';
-    this.inputs = {};
-    this.outputs = {};
+    super();
+    this.type = 'module';
     this.module = null;
+    this.exportName = null;
+
+    // Default inputs for module nodes
+    this.setInputs({
+      args: {
+        type: 'array',
+        required: false,
+        description: 'Arguments to pass to exported function',
+        default: []
+      }
+    });
   }
 
   /**
-   * Import and set the ES module
-   * @param {string} modulePath Path to ES module
+   * Set the ES6 module and export to use
+   * @param {Object} module Imported module
+   * @param {string} exportName Name of export to use
    */
-  async setModule(modulePath) {
-    this.module = await import(modulePath);
+  setModule(module, exportName = 'default') {
+    this.module = module;
+    this.exportName = exportName;
+
+    // Configure inputs/outputs based on export type
+    const moduleExport = this.module[this.exportName];
+    if (typeof moduleExport === 'function') {
+      // Function export - configure inputs based on parameters
+      const params = moduleExport.toString()
+        .match(/\(([^)]*)\)/)[1]
+        .split(',')
+        .map(param => param.trim())
+        .filter(param => param);
+
+      const inputs = {
+        ...this.inputs,  // Keep default args input
+        ...params.reduce((acc, param, index) => {
+          acc[param || `arg${index}`] = {
+            type: 'any',
+            required: true,
+            description: `Parameter ${index + 1} (${param || `arg${index}`})`
+          };
+          return acc;
+        }, {})
+      };
+      this.setInputs(inputs);
+
+      // Configure function output
+      this.setOutputs({
+        result: {
+          type: 'any',
+          description: 'Function return value'
+        }
+      });
+    } else if (typeof moduleExport === 'object') {
+      // Object export - expose properties as outputs
+      const outputs = {};
+      for (const [key, value] of Object.entries(moduleExport)) {
+        outputs[key] = {
+          type: typeof value,
+          description: `${key} property`
+        };
+      }
+      this.setOutputs(outputs);
+    }
   }
 
   /**
-   * Configure node inputs
-   * @param {Object} inputs Input configuration
-   */
-  setInputs(inputs) {
-    this.inputs = inputs;
-  }
-
-  /**
-   * Configure node outputs
-   * @param {Object} outputs Output configuration
-   */
-  setOutputs(outputs) {
-    this.outputs = outputs;
-  }
-
-  /**
-   * Execute module logic with given inputs
+   * Execute module export
    * @param {Object} inputs Input values
-   * @returns {Promise<Object>} Output values
+   * @returns {Promise<Object>} Export value or function result
    */
   async execute(inputs) {
-    if (!this.module) {
-      throw new Error('No module loaded');
+    this.validateInputs(inputs);
+
+    if (!this.module || !this.exportName) {
+      throw new Error('No module or export specified');
     }
-    return await this.module.default(inputs);
+
+    const moduleExport = this.module[this.exportName];
+    
+    try {
+      if (typeof moduleExport === 'function') {
+        // Execute function export
+        const args = inputs.args || [];
+        const result = await moduleExport(...args);
+        return { result };
+      } else {
+        // Return object export directly
+        return moduleExport;
+      }
+    } catch (error) {
+      throw new Error(`Module execution failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Get module metadata including exports info
+   */
+  getMetadata() {
+    const metadata = super.getMetadata();
+    if (this.module) {
+      metadata.exports = Object.keys(this.module);
+      metadata.currentExport = this.exportName;
+    }
+    return metadata;
   }
 }
 
-export default ESModuleNode;
+module.exports = ESModuleNode;
