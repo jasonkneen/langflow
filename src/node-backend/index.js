@@ -4,18 +4,42 @@ const path = require("path");
 const app = express();
 
 // Middleware
+app.use((req, res, next) => {
+  // Basic auth middleware
+  const auth = {user: 'user', password: 'c202cd3deb91633fb5483a37b9d7e0ad'};
+  const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
+  const [user, password] = Buffer.from(b64auth, 'base64').toString().split(':');
+
+  if (user && password && user === auth.user && password === auth.password) {
+    return next();
+  }
+
+  res.set('WWW-Authenticate', 'Basic realm="401"');
+  res.status(401).send('Authentication required.');
+});
+
 app.use(cors({
-  origin: ['https://langflow-node-backend-tunnel-0wtc1f0y.devinapps.com', 'http://localhost:5173'],
-  credentials: true
+  origin: '*',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
 // Serve static files from the frontend build
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
+const staticPath = path.join(__dirname, '../frontend/dist');
+console.log('Static files path:', staticPath);
+app.use(express.static(staticPath));
 
 // Handle React routing, return all requests to React app
-app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+app.get('*', function(req, res, next) {
+  console.log('Handling request for path:', req.path);
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+  const indexPath = path.join(staticPath, 'index.html');
+  console.log('Serving index.html from:', indexPath);
+  res.sendFile(indexPath);
 });
 
 // Base API path
