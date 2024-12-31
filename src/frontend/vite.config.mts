@@ -15,9 +15,10 @@ export default defineConfig(({ mode }) => {
   const apiRoutes = API_ROUTES || ["^/api/v1/", "/health"];
 
   const target =
-    env.VITE_PROXY_TARGET || PROXY_TARGET || "http://127.0.0.1:7860";
+    env.VITE_PROXY_TARGET || PROXY_TARGET || "http://127.0.0.1:8000";
 
-  const port = Number(env.VITE_PORT) || PORT || 3000;
+  const port = Number(env.VITE_PORT) || PORT || 5173;
+  const host = "0.0.0.0";
 
   const proxyTargets = apiRoutes.reduce((proxyObj, route) => {
     proxyObj[route] = {
@@ -35,14 +36,15 @@ export default defineConfig(({ mode }) => {
       outDir: "build",
     },
     define: {
-      "process.env.BACKEND_URL": JSON.stringify(env.BACKEND_URL),
+      "process.env.BACKEND_URL": JSON.stringify(import.meta.env.VITE_BACKEND_URL ?? ""),
       "process.env.ACCESS_TOKEN_EXPIRE_SECONDS": JSON.stringify(
-        env.ACCESS_TOKEN_EXPIRE_SECONDS,
+        import.meta.env.VITE_ACCESS_TOKEN_EXPIRE_SECONDS ?? 3600
       ),
-      "process.env.CI": JSON.stringify(env.CI),
+      "process.env.CI": JSON.stringify(import.meta.env.VITE_CI ?? false),
     },
     plugins: [react(), svgr(), tsconfigPaths()],
     server: {
+      host: host,
       port: port,
       proxy: {
         ...proxyTargets,

@@ -11,6 +11,11 @@ app.options("*", cors());
 
 app.use(express.json());
 
+// Health check endpoint
+app.get('/health_check', (req, res) => {
+  res.json({ status: 'OK' });
+});
+
 // Handle React routes by serving index.html for non-API requests
 app.use((req, res, next) => {
   if (!req.path.startsWith("/api")) {
@@ -63,7 +68,29 @@ const API_BASE = "/api/v1";
 
 // Mock component data for /all endpoint
 const mockComponents = {
-  agents: {},
+  agents: {
+    MCPServer: {
+      base_classes: ["BaseNode"],
+      description: "MCP Server component for handling agent tasks",
+      display_name: "MCP Server",
+      documentation: "https://docs.example.com/mcp-server",
+      fields: {
+        base_url: {
+          required: true,
+          placeholder: "http://localhost:8000",
+          password: false,
+          name: "base_url",
+          type: "str",
+          list: false,
+          value: "",
+          display_name: "Base URL",
+        },
+      },
+      template: {
+        base_url: "http://localhost:8000",
+      },
+    },
+  },
   chains: {},
   memories: {},
   llms: {},
@@ -179,6 +206,59 @@ app.delete(`${API_BASE}/flows/:id`, (req, res) => {
   res.status(204).send();
 });
 
+// POST /api/v1/validate - Validate flow
+app.post(`${API_BASE}/validate`, (req, res) => {
+  res.json({ valid: true });
+});
+
+// GET /api/v1/flows/download/{flow_id} - Download flow
+app.get(`${API_BASE}/flows/download/:id`, (req, res) => {
+  const flow = flows.get(req.params.id);
+  if (!flow) {
+    return res.status(404).json({ error: "Flow not found" });
+  }
+  res.json(flow);
+});
+
+// POST /api/v1/auto_login - Auto login endpoint
+app.post(`${API_BASE}/auto_login`, (req, res) => {
+  res.json({
+    access_token: "dummy_token",
+    expires_in: 3600,
+    refresh_token: "dummy_refresh_token",
+    token_type: "bearer",
+  });
+});
+
+// GET /api/v1/all_types - Get all component types
+app.get(`${API_BASE}/all_types`, (req, res) => {
+  res.json({
+    agents: [],
+    chains: [],
+    memories: [],
+    llms: [],
+    tools: [],
+    embeddings: [],
+    vectorstores: [],
+    documentloaders: [],
+    textsplitters: [],
+    utilities: [],
+    custom_components: [],
+    prompts: [],
+    retrievers: [],
+    output_parsers: [],
+    chat: [],
+    cache: [],
+  });
+});
+
+// GET /api/v1/components - Get all components
+app.get(`${API_BASE}/components`, (req, res) => {
+  res.json({
+    components: mockComponents,
+  });
+});
+
 // POST /api/v1/build/init/{flow_id} - Initialize flow build
 app.post(`${API_BASE}/build/init/:flowId`, (req, res) => {
   const flow = flows.get(req.params.flowId);
@@ -254,6 +334,40 @@ app.post(`${API_BASE}/run/:flowId`, async (req, res) => {
   }
 });
 
+// POST /api/v1/validate - Validate flow
+app.post(`${API_BASE}/validate`, (req, res) => {
+  // Mock validation response
+  res.json({
+    valid: true,
+    message: "Flow validation successful",
+  });
+});
+
+// GET /api/v1/auto_login - Auto login endpoint
+app.get(`${API_BASE}/auto_login`, (req, res) => {
+  res.json({
+    authenticated: true,
+    username: "user",
+  });
+});
+
+// GET /api/v1/components/list - List available components
+app.get(`${API_BASE}/components/list`, (req, res) => {
+  const componentList = Object.entries(mockComponents).reduce((acc, [type, components]) => {
+    Object.entries(components).forEach(([name, details]) => {
+      acc.push({
+        id: `${type}-${name}`,
+        name,
+        type,
+        ...details,
+      });
+    });
+    return acc;
+  }, []);
+
+  res.json(componentList);
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -263,7 +377,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 8000; // Local development port
-app.listen(PORT, () => {
-  console.log(`Node.js backend running on port ${PORT}`);
-});
+if (require.main === module) {
+  const PORT = process.env.PORT || 8000; // Local development port
+  app.listen(PORT, () => {
+    console.log(`Node.js backend running on port ${PORT}`);
+  });
+}
+
+module.exports = app;

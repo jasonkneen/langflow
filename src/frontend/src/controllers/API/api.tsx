@@ -14,7 +14,7 @@ import { useLogout, useRefreshAccessToken } from "./queries/auth";
 
 // Create a new Axios instance
 const api: AxiosInstance = axios.create({
-  baseURL: "http://backend:8000/api/v1",
+  baseURL: "http://127.0.0.1:8000/api/v1",
 });
 
 const cookies = new Cookies();
