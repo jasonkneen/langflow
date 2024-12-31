@@ -42,11 +42,7 @@ function ApiInterceptor() {
   useEffect(() => {
     const unregister = fetchIntercept.register({
       request: function (url, config) {
-        const accessToken = cookies.get(LANGFLOW_ACCESS_TOKEN);
-        if (accessToken && !isAuthorizedURL(config?.url)) {
-          config.headers["Authorization"] = `Bearer ${accessToken}`;
-        }
-
+        // Skip auth token in development
         for (const [key, value] of Object.entries(customHeaders)) {
           config.headers[key] = value;
         }
@@ -60,33 +56,12 @@ function ApiInterceptor() {
         return response;
       },
       async (error: AxiosError) => {
-        const isAuthenticationError =
-          error?.response?.status === 403 || error?.response?.status === 401;
-
-        if (isAuthenticationError) {
-          if (autoLogin !== undefined && !autoLogin) {
-            if (error?.config?.url?.includes("github")) {
-              return Promise.reject(error);
-            }
-            const stillRefresh = checkErrorCount();
-            if (!stillRefresh) {
-              return Promise.reject(error);
-            }
-
-            await tryToRenewAccessToken(error);
-
-            const accessToken = cookies.get(LANGFLOW_ACCESS_TOKEN);
-            if (!accessToken && error?.config?.url?.includes("login")) {
-              return Promise.reject(error);
-            }
-          }
+        // Skip auth errors in development
+        if (error?.response?.status === 403 || error?.response?.status === 401) {
+          return Promise.resolve({ data: {} });
         }
-
         await clearBuildVerticesState(error);
-
-        if (!isAuthenticationError) {
-          return Promise.reject(error);
-        }
+        return Promise.reject(error);
       },
     );
 
@@ -126,11 +101,6 @@ function ApiInterceptor() {
           const error = e as Error;
           controller.abort(error.message);
           console.error(error.message);
-        }
-
-        const accessToken = cookies.get(LANGFLOW_ACCESS_TOKEN);
-        if (accessToken && !isAuthorizedURL(config?.url)) {
-          config.headers["Authorization"] = `Bearer ${accessToken}`;
         }
 
         const currentOrigin = window.location.origin;

@@ -1,23 +1,25 @@
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const app = express();
 
-// CORS configuration middleware for local development
-// Configure CORS for local development
+// CORS configuration middleware
 app.use(cors({
-  origin: true, // Allow all origins in development
+  origin: true, // Allow all origins
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Length', 'Content-Type']
 }));
 
 // Handle preflight requests
 app.options("*", cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: true, // Allow all origins
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Length', 'Content-Type']
 }));
 
 app.use(express.json());
@@ -26,6 +28,24 @@ app.use(express.json());
 // Health check endpoint
 app.get('/api/v1/health_check', (req, res) => {
   res.json({ status: 'OK' });
+});
+
+// Auto login endpoint (no authentication in development)
+app.get('/api/v1/auto_login', (req, res) => {
+  res.json({
+    access_token: 'dev_token',
+    token_type: 'bearer',
+    user: {
+      id: 1,
+      username: 'dev',
+      is_superuser: true
+    }
+  });
+});
+
+// Logout endpoint
+app.post('/api/v1/logout', (req, res) => {
+  res.json({ message: 'Logged out successfully' });
 });
 
 // Handle React routes by serving index.html for non-API requests
@@ -78,7 +98,7 @@ app.use(
 // Base API path
 const API_BASE = "/api/v1";
 
-// Mock component data for /all endpoint
+// Mock component data for /all endpoint matching APIObjectType structure
 const mockComponents = {
   agents: {
     MCPServer: {
@@ -86,35 +106,101 @@ const mockComponents = {
       description: "MCP Server component for handling agent tasks",
       display_name: "MCP Server",
       documentation: "https://docs.example.com/mcp-server",
-      fields: {
+      template: {
         base_url: {
+          type: "str",
           required: true,
           placeholder: "http://localhost:8000",
-          password: false,
-          name: "base_url",
-          type: "str",
           list: false,
-          value: "",
+          show: true,
+          readonly: false,
+          value: "http://localhost:8000",
+          name: "base_url",
           display_name: "Base URL",
-        },
+          advanced: false
+        }
       },
-      template: {
-        base_url: "http://localhost:8000",
-      },
+      icon: "🤖",
+      beta: false,
+      official: true,
+      field_order: ["base_url"]
     },
+    ESModule: {
+      base_classes: ["BaseNode"],
+      description: "ES6 Module component for importing and using JavaScript modules",
+      display_name: "ES6 Module",
+      documentation: "https://docs.example.com/es-module",
+      template: {
+        module_path: {
+          type: "str",
+          required: true,
+          placeholder: "./modules/example.js",
+          list: false,
+          show: true,
+          readonly: false,
+          name: "module_path",
+          display_name: "Module Path",
+          advanced: false
+        }
+      },
+      icon: "📦",
+      beta: false,
+      official: true,
+      field_order: ["module_path"]
+    }
   },
-  chains: {},
-  memories: {},
-  llms: {},
-  prompts: {},
-  tools: {},
-  embeddings: {},
-  documentLoaders: {},
-  vectorStores: {},
-  textSplitters: {},
-  utilities: {},
-  custom_components: {},
-  output_parsers: {},
+  functions: {
+    JSFunction: {
+      base_classes: ["BaseNode"],
+      description: "JavaScript function component for custom code execution",
+      display_name: "JS Function",
+      documentation: "https://docs.example.com/js-function",
+      template: {
+        code: {
+          type: "str",
+          required: true,
+          placeholder: "function example() { return 'Hello World'; }",
+          list: false,
+          show: true,
+          readonly: false,
+          multiline: true,
+          name: "code",
+          display_name: "Function Code",
+          advanced: false
+        }
+      },
+      icon: "⚡",
+      beta: false,
+      official: true,
+      field_order: ["code"]
+    }
+  },
+  classes: {
+    JSClass: {
+      base_classes: ["BaseNode"],
+      description: "JavaScript class component for object-oriented implementations",
+      display_name: "JS Class",
+      documentation: "https://docs.example.com/js-class",
+      template: {
+        class_code: {
+          type: "str",
+          required: true,
+          placeholder: "class Example { constructor() {} }",
+          list: false,
+          show: true,
+          readonly: false,
+          multiline: true,
+          name: "class_code",
+          display_name: "Class Code",
+          advanced: false
+        }
+      },
+      icon: "🏗️",
+      beta: false,
+      official: true,
+      field_order: ["class_code"]
+    }
+  }
 };
 
 // GET /api/v1/all - Get all component types
@@ -156,7 +242,7 @@ const createFlow = (flowData) => {
   };
 };
 
-// GET /api/v1/flows - List all flows
+// GET /api/v1/flows - List all flows with proper pagination
 app.get(`${API_BASE}/flows`, (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const size = parseInt(req.query.size) || 10;
@@ -165,12 +251,25 @@ app.get(`${API_BASE}/flows`, (req, res) => {
   const end = start + size;
   const paginatedFlows = flowList.slice(start, end);
 
+  // Match frontend pagination type
   res.json({
     total: flowList.length,
-    items: paginatedFlows,
+    flows: paginatedFlows.map(flow => ({
+      id: flow.id,
+      name: flow.name,
+      description: flow.description,
+      style: flow.style,
+      is_component: flow.is_component || false,
+      last_tested_version: flow.last_tested_version,
+      updated_at: flow.updated_at,
+      data: flow.data,
+      folder_id: flow.folder_id,
+      user_id: flow.user_id,
+      tags: flow.tags || []
+    })),
     page,
-    size,
-    pages: Math.ceil(flowList.length / size),
+    page_size: size,
+    total_pages: Math.ceil(flowList.length / size),
   });
 });
 
@@ -232,20 +331,18 @@ app.get(`${API_BASE}/flows/download/:id`, (req, res) => {
   res.json(flow);
 });
 
-// POST /api/v1/auto_login - Auto login endpoint
+// POST /api/v1/auto_login - Auto login endpoint (disabled in development)
 app.post(`${API_BASE}/auto_login`, (req, res) => {
-  res.json({
-    access_token: "dummy_token",
-    expires_in: 3600,
-    refresh_token: "dummy_refresh_token",
-    token_type: "bearer",
-  });
+  res.json({ status: 'ok' });
 });
 
 // GET /api/v1/all_types - Get all component types
 app.get(`${API_BASE}/all_types`, (req, res) => {
-  res.json({
-    agents: [],
+  // Return available component types based on our mockComponents
+  const types = {
+    agents: Object.keys(mockComponents.agents || {}),
+    functions: Object.keys(mockComponents.functions || {}),
+    classes: Object.keys(mockComponents.classes || {}),
     chains: [],
     memories: [],
     llms: [],
@@ -260,14 +357,31 @@ app.get(`${API_BASE}/all_types`, (req, res) => {
     retrievers: [],
     output_parsers: [],
     chat: [],
-    cache: [],
-  });
+    cache: []
+  };
+  res.json(types);
 });
 
-// GET /api/v1/components - Get all components
+// GET /api/v1/components - Get all components with proper APIObjectType structure
 app.get(`${API_BASE}/components`, (req, res) => {
+  // Return components in the exact shape expected by the frontend
   res.json({
-    components: mockComponents,
+    components: {
+      agents: mockComponents.agents || {},
+      functions: mockComponents.functions || {},
+      classes: mockComponents.classes || {},
+      chains: {},
+      memories: {},
+      llms: {},
+      tools: {},
+      embeddings: {},
+      documentLoaders: {},
+      vectorStores: {},
+      textSplitters: {},
+      utilities: {},
+      custom_components: {},
+      output_parsers: {}
+    }
   });
 });
 
