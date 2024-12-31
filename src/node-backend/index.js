@@ -1,7 +1,18 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const basicAuth = require('basic-auth');
 const app = express();
+
+// Authentication middleware
+function authMiddleware(req, res, next) {
+  const user = basicAuth(req);
+  if (!user || user.name !== 'user' || user.pass !== '990ae4614d5a31ece370727bb3174e45') {
+    res.set('WWW-Authenticate', 'Basic realm="Restricted Area"');
+    return res.status(401).send({ error: 'Unauthorized' });
+  }
+  next();
+}
 
 // Middleware
 app.use(cors({
@@ -12,6 +23,9 @@ app.use(cors({
   exposedHeaders: ['WWW-Authenticate']
 }));
 app.use(express.json());
+
+// Apply auth middleware to /api routes
+app.use('/api', authMiddleware);
 
 
 
