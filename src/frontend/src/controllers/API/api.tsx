@@ -17,7 +17,7 @@ const api: AxiosInstance = axios.create({
   baseURL: "",
   auth: {
     username: 'user',
-    password: 'fbffeaaa6f83c708f77da667f0ac85ac'
+    password: '0f8176f3a646d594ce90449aec3b224e'
   }
 });
 

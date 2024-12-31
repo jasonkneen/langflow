@@ -32,23 +32,31 @@ app.get('*', function(req, res, next) {
 // Base API path
 const API_BASE = "/api/v1";
 
-// Basic auth middleware for API routes only
-app.use('/api', (req, res, next) => {
-  const auth = {user: 'user', password: 'cbd3bec3b00717ba14f0394d4a69e31f'};
-  const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
-  const [user, password] = Buffer.from(b64auth, 'base64').toString().split(':');
+// Mock component data for /all endpoint
+const mockComponents = {
+  agents: {},
+  chains: {},
+  memories: {},
+  llms: {},
+  prompts: {},
+  tools: {},
+  embeddings: {},
+  documentLoaders: {},
+  vectorStores: {},
+  textSplitters: {},
+  utilities: {},
+  custom_components: {},
+  output_parsers: {}
+};
 
-  if (user && password && user === auth.user && password === auth.password) {
-    return next();
-  }
-
-  res.set('WWW-Authenticate', 'Basic realm="401"');
-  res.status(401).send('Authentication required.');
+// GET /api/v1/all - Get all component types
+app.get(`${API_BASE}/all`, (req, res) => {
+  res.json(mockComponents);
 });
 
 // Basic auth middleware for API routes
 app.use('/api', (req, res, next) => {
-  const auth = {user: 'user', password: 'fbffeaaa6f83c708f77da667f0ac85ac'};
+  const auth = {user: 'user', password: '990ae4614d5a31ece370727bb3174e45'};
   const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
   const [user, password] = Buffer.from(b64auth, 'base64').toString().split(':');
 
