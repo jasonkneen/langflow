@@ -22,10 +22,6 @@ export default defineConfig({
           'Authorization': 'Basic ' + Buffer.from('user:fbffeaaa6f83c708f77da667f0ac85ac').toString('base64')
         }
       }
-    },
-    hmr: {
-      clientPort: 443,
-      protocol: 'wss'
     }
   }
 });
