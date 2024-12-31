@@ -4,7 +4,7 @@
 class BaseNode {
   constructor() {
     this.id = null;
-    this.type = 'base';
+    this.type = "base";
     this.inputs = {};
     this.outputs = {};
     this.data = null;
@@ -36,7 +36,7 @@ class BaseNode {
   }
 
   /**
-   * Configure node outputs 
+   * Configure node outputs
    * @param {Object} outputs Output configuration
    * Example:
    * {
@@ -75,10 +75,12 @@ class BaseNode {
       if (key in inputValues && inputValues[key] !== null) {
         const value = inputValues[key];
         const expectedType = config.type.toLowerCase();
-        const actualType = Array.isArray(value) ? 'array' : typeof value;
+        const actualType = Array.isArray(value) ? "array" : typeof value;
 
         if (actualType !== expectedType) {
-          throw new Error(`Invalid type for input ${key}. Expected ${expectedType}, got ${actualType}`);
+          throw new Error(
+            `Invalid type for input ${key}. Expected ${expectedType}, got ${actualType}`,
+          );
         }
       }
     }
@@ -91,7 +93,7 @@ class BaseNode {
    * @returns {Promise<Object>} Output values
    */
   async execute(inputs) {
-    throw new Error('Execute method must be implemented');
+    throw new Error("Execute method must be implemented");
   }
 
   /**
@@ -104,7 +106,7 @@ class BaseNode {
       type: this.type,
       inputs: this.inputs,
       outputs: this.outputs,
-      data: this.data
+      data: this.data,
     };
   }
 
@@ -122,17 +124,17 @@ class BaseNode {
           type: config.type,
           required: config.required,
           description: config.description,
-          default: config.default
+          default: config.default,
         };
         return acc;
       }, {}),
       outputs: Object.entries(this.outputs).reduce((acc, [key, config]) => {
         acc[key] = {
           type: config.type,
-          description: config.description
+          description: config.description,
         };
         return acc;
-      }, {})
+      }, {}),
     };
   }
 }

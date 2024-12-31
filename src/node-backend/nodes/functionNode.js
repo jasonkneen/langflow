@@ -1,4 +1,4 @@
-const BaseNode = require('./baseNode');
+const BaseNode = require("./baseNode");
 
 /**
  * Node type for executing JavaScript functions
@@ -6,7 +6,7 @@ const BaseNode = require('./baseNode');
 class FunctionNode extends BaseNode {
   constructor() {
     super();
-    this.type = 'function';
+    this.type = "function";
     this.fn = null;
   }
 
@@ -15,24 +15,25 @@ class FunctionNode extends BaseNode {
    * @param {Function} fn Function to execute
    */
   setFunction(fn) {
-    if (typeof fn !== 'function') {
-      throw new Error('Must provide a function');
+    if (typeof fn !== "function") {
+      throw new Error("Must provide a function");
     }
     this.fn = fn;
 
     // Configure inputs based on function parameters
-    const params = fn.toString()
+    const params = fn
+      .toString()
       .match(/\(([^)]*)\)/)[1]
-      .split(',')
-      .map(param => param.trim())
-      .filter(param => param);
+      .split(",")
+      .map((param) => param.trim())
+      .filter((param) => param);
 
     const inputs = {};
     params.forEach((param, index) => {
       inputs[param || `arg${index}`] = {
-        type: 'any',
+        type: "any",
         required: true,
-        description: `Parameter ${index + 1} (${param || `arg${index}`})`
+        description: `Parameter ${index + 1} (${param || `arg${index}`})`,
       };
     });
     this.setInputs(inputs);
@@ -40,9 +41,9 @@ class FunctionNode extends BaseNode {
     // Configure default output
     this.setOutputs({
       result: {
-        type: 'any',
-        description: 'Function return value'
-      }
+        type: "any",
+        description: "Function return value",
+      },
     });
   }
 
@@ -55,18 +56,18 @@ class FunctionNode extends BaseNode {
     this.validateInputs(inputs);
 
     if (!this.fn) {
-      throw new Error('No function set');
+      throw new Error("No function set");
     }
 
     // Extract arguments in order specified by inputs configuration
-    const args = Object.keys(this.inputs).map(key => inputs[key]);
-    
+    const args = Object.keys(this.inputs).map((key) => inputs[key]);
+
     try {
       // Call function with spread arguments
       const result = await this.fn(...args);
 
       // Handle different return types
-      if (result && typeof result === 'object') {
+      if (result && typeof result === "object") {
         return result;
       }
       return { result };

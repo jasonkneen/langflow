@@ -1,4 +1,4 @@
-const BaseNode = require('./baseNode');
+const BaseNode = require("./baseNode");
 
 /**
  * Node type for representing JavaScript classes
@@ -6,31 +6,30 @@ const BaseNode = require('./baseNode');
 class ClassNode extends BaseNode {
   constructor() {
     super();
-    this.type = 'class';
+    this.type = "class";
     this.classInstance = null;
     this.ClassDefinition = null;
-
 
     // Default inputs for class nodes
     this.setInputs({
       constructorArgs: {
-        type: 'array',
+        type: "array",
         required: false,
-        description: 'Arguments to pass to class constructor',
-        default: []
+        description: "Arguments to pass to class constructor",
+        default: [],
       },
       method: {
-        type: 'string',
+        type: "string",
         required: false,
-        description: 'Method to call on class instance',
-        default: 'execute'
+        description: "Method to call on class instance",
+        default: "execute",
       },
       methodArgs: {
-        type: 'array',
+        type: "array",
         required: false,
-        description: 'Arguments to pass to method',
-        default: []
-      }
+        description: "Arguments to pass to method",
+        default: [],
+      },
     });
   }
 
@@ -39,20 +38,21 @@ class ClassNode extends BaseNode {
    * @param {Function} ClassDefinition Class constructor
    */
   setClass(ClassDefinition) {
-    if (typeof ClassDefinition !== 'function') {
-      throw new Error('Class definition must be a constructor function');
+    if (typeof ClassDefinition !== "function") {
+      throw new Error("Class definition must be a constructor function");
     }
     this.ClassDefinition = ClassDefinition;
 
     // Update outputs based on class methods
-    const methods = Object.getOwnPropertyNames(ClassDefinition.prototype)
-      .filter(name => name !== 'constructor');
-    
+    const methods = Object.getOwnPropertyNames(
+      ClassDefinition.prototype,
+    ).filter((name) => name !== "constructor");
+
     const outputs = {};
     for (const method of methods) {
       outputs[method] = {
-        type: 'any',
-        description: `Return value of ${method} method`
+        type: "any",
+        description: `Return value of ${method} method`,
       };
     }
     this.setOutputs(outputs);
@@ -67,7 +67,7 @@ class ClassNode extends BaseNode {
     this.validateInputs(inputs);
 
     if (!this.ClassDefinition) {
-      throw new Error('No class definition set');
+      throw new Error("No class definition set");
     }
 
     // Create new instance if needed
@@ -77,8 +77,8 @@ class ClassNode extends BaseNode {
     }
 
     // Call specified method
-    const methodName = inputs.method || 'execute';
-    if (typeof this.classInstance[methodName] !== 'function') {
+    const methodName = inputs.method || "execute";
+    if (typeof this.classInstance[methodName] !== "function") {
       throw new Error(`Method ${methodName} not found on class instance`);
     }
 
@@ -94,8 +94,9 @@ class ClassNode extends BaseNode {
   getMetadata() {
     const metadata = super.getMetadata();
     if (this.ClassDefinition) {
-      metadata.methods = Object.getOwnPropertyNames(this.ClassDefinition.prototype)
-        .filter(name => name !== 'constructor');
+      metadata.methods = Object.getOwnPropertyNames(
+        this.ClassDefinition.prototype,
+      ).filter((name) => name !== "constructor");
     }
     return metadata;
   }
