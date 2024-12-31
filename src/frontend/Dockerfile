@@ -1,22 +1,20 @@
-FROM node:18-alpine
+FROM node:18-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files first for better layer caching
 COPY package*.json ./
+RUN npm ci --no-audit --no-progress
 
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the frontend files
 COPY . .
-
-# Build the frontend
 RUN npm run build
 
-# Expose the frontend port
+FROM node:18-alpine
+WORKDIR /app
+COPY --from=builder /app/dist /app/dist
+COPY package*.json ./
+RUN npm ci --production --no-audit --no-progress && npm cache clean --force
+
+ENV PORT=5173
 EXPOSE 5173
 
-# Start the development server
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+CMD ["npm", "run", "serve"]

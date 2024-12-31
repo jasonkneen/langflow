@@ -944,9 +944,8 @@ export const LANGFLOW_API_TOKEN = "apikey_tkn_lflw";
 export const LANGFLOW_AUTO_LOGIN_OPTION = "auto_login_lf";
 export const LANGFLOW_REFRESH_TOKEN = "refresh_token_lf";
 
-export const LANGFLOW_ACCESS_TOKEN_EXPIRE_SECONDS = 60 * 60 - 60 * 60 * 0.1;
-export const LANGFLOW_ACCESS_TOKEN_EXPIRE_SECONDS_ENV =
-  Number(import.meta.env.VITE_ACCESS_TOKEN_EXPIRE_SECONDS ?? 3600) * 0.9;
+export const LANGFLOW_ACCESS_TOKEN_EXPIRE_SECONDS = Number(import.meta.env.VITE_ACCESS_TOKEN_EXPIRE_SECONDS ?? 3600) - Number(import.meta.env.VITE_ACCESS_TOKEN_EXPIRE_SECONDS ?? 3600) * 0.1;
+export const LANGFLOW_ACCESS_TOKEN_EXPIRE_SECONDS_ENV = Number(import.meta.env.VITE_ACCESS_TOKEN_EXPIRE_SECONDS ?? 3600) * 0.9;
 export const TEXT_FIELD_TYPES: string[] = ["str", "SecretStr"];
 export const NODE_WIDTH = 384;
 export const NODE_HEIGHT = NODE_WIDTH * 3;

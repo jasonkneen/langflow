@@ -4,15 +4,27 @@ const path = require("path");
 const app = express();
 
 // CORS configuration middleware for local development
-app.use(cors());
+// Configure CORS for local development
+app.use(cors({
+  origin: true, // Allow all origins in development
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Handle preflight requests
-app.options("*", cors());
+app.options("*", cors({
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(express.json());
 
 // Health check endpoint
-app.get('/health_check', (req, res) => {
+// Health check endpoint
+app.get('/api/v1/health_check', (req, res) => {
   res.json({ status: 'OK' });
 });
 

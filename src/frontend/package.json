@@ -94,7 +94,7 @@
     "dev": "vite --host 0.0.0.0",
     "start": "vite",
     "build": "vite build",
-    "serve": "vite preview",
+    "serve": "vite preview --host 0.0.0.0 --port 5173",
     "format": "npx prettier --write \"{tests,src}/**/*.{js,jsx,ts,tsx,json,md}\" --ignore-path .prettierignore",
     "check-format": "npx prettier --check \"{tests,src}/**/*.{js,jsx,ts,tsx,json,md}\" --ignore-path .prettierignore",
     "type-check": "tsc --noEmit --pretty --project tsconfig.json && vite",

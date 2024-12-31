@@ -1,19 +1,13 @@
 FROM node:18-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files first for better layer caching
 COPY package*.json ./
+RUN npm ci --no-audit --no-progress && npm cache clean --force
 
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the backend files
 COPY . .
 
-# Expose the backend port
+ENV PORT=8000
 EXPOSE 8000
 
-# Start the Node.js server
 CMD ["node", "index.js"]

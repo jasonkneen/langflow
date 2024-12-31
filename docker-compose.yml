@@ -5,29 +5,31 @@ services:
     build:
       context: ./src/node-backend
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
+      args:
+        - NODE_ENV=development
+    network_mode: host
     environment:
       - NODE_ENV=development
       - PORT=8000
-    networks:
-      - langflow-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8000/health_check"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   frontend:
     build:
       context: ./src/frontend
       dockerfile: Dockerfile
-    ports:
-      - "5173:5173"
+      args:
+        - NODE_ENV=development
+    network_mode: host
     environment:
       - NODE_ENV=development
-      - VITE_PORT=5173
-      - VITE_PROXY_TARGET=http://backend:8000
+      - PORT=5173
+      - VITE_PROXY_TARGET=http://localhost:8000
+    restart: unless-stopped
     depends_on:
-      - backend
-    networks:
-      - langflow-network
-
-networks:
-  langflow-network:
-    driver: bridge
+      backend:
+        condition: service_healthy
