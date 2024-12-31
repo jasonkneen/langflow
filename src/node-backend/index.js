@@ -13,6 +13,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
+
+
 // Serve static files from the public directory
 const staticPath = path.join(__dirname, 'public');
 console.log('Static files path:', staticPath);
@@ -54,19 +56,7 @@ app.get(`${API_BASE}/all`, (req, res) => {
   res.json(mockComponents);
 });
 
-// Basic auth middleware for API routes
-app.use('/api', (req, res, next) => {
-  const auth = {user: 'user', password: '990ae4614d5a31ece370727bb3174e45'};
-  const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
-  const [user, password] = Buffer.from(b64auth, 'base64').toString().split(':');
 
-  if (user && password && user === auth.user && password === auth.password) {
-    return next();
-  }
-
-  res.set('WWW-Authenticate', 'Basic realm="401"');
-  res.status(401).send('Authentication required.');
-});
 
 // Flow storage (in-memory for now)
 const flows = new Map();
