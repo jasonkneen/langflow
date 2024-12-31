@@ -51,7 +51,7 @@ delete_temp() {
 }
 
 # Trap signals to ensure cleanup on script termination
-trap 'terminate_process_by_port 7860; terminate_process_by_port 3000; delete_temp' EXIT
+trap 'terminate_process_by_port 8000; terminate_process_by_port 5173; delete_temp' EXIT
 
 # Ensure the script is executed from the project root directory
 if ! cd "$PROJECT_ROOT"; then
@@ -78,7 +78,7 @@ if ! poetry install; then
 fi
 
 # Start the backend
-LANGFLOW_DATABASE_URL=sqlite:///./temp LANGFLOW_AUTO_LOGIN=True poetry run langflow run --backend-only --port 7860 --host 0.0.0.0 --no-open-browser > /dev/null 2>&1 &
+node ../node-backend/index.js --port 8000 --host 0.0.0.0 > /dev/null 2>&1 &
 backend_pid=$!  # Capture PID of the backend process
 # Adjust sleep duration as needed
 sleep 25
@@ -92,7 +92,7 @@ if ! cd src/frontend; then
 fi
 
 # Check if backend is running
-if ! lsof -i :7860; then
+if ! lsof -i :8000; then
     echo "Error: Backend is not running. Aborting."
     exit 1
 fi
@@ -115,4 +115,4 @@ if [ "$ui" = true ]; then
 fi
 
 
-trap 'terminate_process_by_port 7860; terminate_process_by_port 3000; delete_temp; kill $backend_pid 2>/dev/null' EXIT
+trap 'terminate_process_by_port 8000; terminate_process_by_port 5173; delete_temp; kill $backend_pid 2>/dev/null' EXIT

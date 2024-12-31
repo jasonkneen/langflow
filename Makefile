@@ -1,4 +1,4 @@
-.PHONY: all init format_backend format_frontend format lint build build_frontend install_frontend run_frontend run_backend dev help tests coverage clean_python_cache clean_npm_cache clean_all
+.PHONY: all install format lint build dev help clean test
 
 # Configurations
 VERSION=1.0.0
@@ -6,41 +6,24 @@ RED=\033[0;31m
 NC=\033[0m # No Color
 GREEN=\033[0;32m
 
-log_level ?= debug
-host ?= 0.0.0.0
-port ?= 7860
-env ?= .env
-open_browser ?= true
-path = src/backend/base/langflow/frontend
-workers ?= 1
-async ?= true
-lf ?= false
-ff ?= true
 all: help
 
 ######################
 # UTILITIES
 ######################
 
-# Some directories may be mount points as in devcontainer, so we need to clear their
-# contents rather than remove the entire directory. But we must also be mindful that
-# we are not running in a devcontainer, so need to ensure the directories exist.
-# See https://code.visualstudio.com/remote/advancedcontainers/improve-performance
-CLEAR_DIRS = $(foreach dir,$1,$(shell mkdir -p $(dir) && find $(dir) -mindepth 1 -delete))
-
-# increment the patch version of the current package
-patch: ## bump the version in langflow and langflow-base
-	@echo 'Patching the version'
-	@poetry version patch
-	@echo 'Patching the version in langflow-base'
-	@cd src/backend/base && poetry version patch
-	@make lock
-
 # check for required tools
 check_tools:
-	@command -v uv >/dev/null 2>&1 || { echo >&2 "$(RED)uv is not installed. Aborting.$(NC)"; exit 1; }
 	@command -v npm >/dev/null 2>&1 || { echo >&2 "$(RED)NPM is not installed. Aborting.$(NC)"; exit 1; }
+	@command -v node >/dev/null 2>&1 || { echo >&2 "$(RED)Node.js is not installed. Aborting.$(NC)"; exit 1; }
 	@echo "$(GREEN)All required tools are installed.$(NC)"
+
+help: ## show this help message
+	@echo '----'
+	@grep -hE '^\S+:.*##' $(MAKEFILE_LIST) | \
+	awk -F ':.*##' '{printf "\033[36mmake %s\033[0m: %s\n", $$1, $$2}' | \
+	column -c2 -t -s :
+	@echo '----'
 
 
 help: ## show this help message
@@ -54,30 +37,25 @@ help: ## show this help message
 # INSTALL PROJECT
 ######################
 
-reinstall_backend: ## forces reinstall all dependencies (no caching)
+install_backend: ## install backend dependencies
 	@echo 'Installing backend dependencies'
-	@uv sync -n --reinstall --frozen
+	@cd src/node-backend && npm install
 
-install_backend: ## install the backend dependencies
-	@echo 'Installing backend dependencies'
-	@uv sync --frozen
-
-install_frontend: ## install the frontend dependencies
+install_frontend: ## install frontend dependencies
 	@echo 'Installing frontend dependencies'
-	@cd src/frontend && npm install > /dev/null 2>&1
+	@cd src/frontend && npm install
 
-build_frontend: ## build the frontend static files
-	@echo '==== Starting frontend build ===='
-	@echo 'Current directory: $$(pwd)'
-	@echo 'Checking if src/frontend exists...'
-	@ls -la src/frontend || true
-	@echo 'Building frontend static files...'
-	@cd src/frontend && CI='' npm run build 2>&1 || { echo "\nBuild failed! Error output above ☝️"; exit 1; }
-	@echo 'Clearing destination directory...'
-	$(call CLEAR_DIRS,src/backend/base/langflow/frontend)
-	@echo 'Copying build files...'
-	@cp -r src/frontend/build/. src/backend/base/langflow/frontend
-	@echo '==== Frontend build complete ===='
+install: install_frontend install_backend ## install all dependencies
+
+build_frontend: ## build frontend
+	@echo 'Building frontend...'
+	@cd src/frontend && npm run build
+
+build_backend: ## build backend
+	@echo 'Building backend...'
+	@cd src/node-backend && npm run build
+
+build: build_frontend build_backend ## build all
 
 init: check_tools clean_python_cache clean_npm_cache ## initialize the project
 	@make install_backend
@@ -210,7 +188,7 @@ install_frontendc:
 	@cd src/frontend && $(call CLEAR_DIRS,node_modules) && rm -f package-lock.json && npm install > /dev/null 2>&1
 
 run_frontend: ## run the frontend
-	@-kill -9 `lsof -t -i:3000`
+	@-kill -9 `lsof -t -i:5173`
 	@cd src/frontend && npm start $(if $(FRONTEND_START_FLAGS),-- $(FRONTEND_START_FLAGS))
 
 tests_frontend: ## run frontend tests
@@ -261,7 +239,7 @@ frontendc: install_frontendc
 
 
 backend: setup_env install_backend ## run the backend in development mode
-	@-kill -9 $$(lsof -t -i:7860) || true
+	@-kill -9 $$(lsof -t -i:8000) || true
 ifdef login
 	@echo "Running backend autologin is $(login)";
 	LANGFLOW_AUTO_LOGIN=$(login) uv run uvicorn \

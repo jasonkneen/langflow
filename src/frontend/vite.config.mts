@@ -36,11 +36,7 @@ export default defineConfig(({ mode }) => {
       outDir: "build",
     },
     define: {
-      "process.env.BACKEND_URL": JSON.stringify(import.meta.env.VITE_BACKEND_URL ?? ""),
-      "process.env.ACCESS_TOKEN_EXPIRE_SECONDS": JSON.stringify(
-        import.meta.env.VITE_ACCESS_TOKEN_EXPIRE_SECONDS ?? 3600
-      ),
-      "process.env.CI": JSON.stringify(import.meta.env.VITE_CI ?? false),
+      // Environment variables are accessed directly via import.meta.env
     },
     plugins: [react(), svgr(), tsconfigPaths()],
     server: {
