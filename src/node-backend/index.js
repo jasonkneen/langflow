@@ -26,8 +26,8 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Serve static files from the frontend build
-const staticPath = path.join(__dirname, '../frontend/dist');
+// Serve static files from the public directory
+const staticPath = path.join(__dirname, 'public');
 console.log('Static files path:', staticPath);
 app.use(express.static(staticPath));
 
