@@ -5,7 +5,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3001', 'https://langflow-node-backend-tunnel-vj8t99q9.devinapps.com', 'https://langflow-node-backend-tunnel-zrnbe63q.devinapps.com'],
+  origin: '*',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -31,6 +31,20 @@ app.get('*', function(req, res, next) {
 
 // Base API path
 const API_BASE = "/api/v1";
+
+// Basic auth middleware for API routes only
+app.use('/api', (req, res, next) => {
+  const auth = {user: 'user', password: 'cbd3bec3b00717ba14f0394d4a69e31f'};
+  const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
+  const [user, password] = Buffer.from(b64auth, 'base64').toString().split(':');
+
+  if (user && password && user === auth.user && password === auth.password) {
+    return next();
+  }
+
+  res.set('WWW-Authenticate', 'Basic realm="401"');
+  res.status(401).send('Authentication required.');
+});
 
 // Basic auth middleware for API routes
 app.use('/api', (req, res, next) => {
