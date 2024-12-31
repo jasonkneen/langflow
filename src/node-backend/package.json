@@ -1,0 +1,21 @@
+{
+  "name": "@langflow/backend",
+  "version": "1.0.0",
+  "description": "Node.js backend for Langflow with support for various node types",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "langflow",
+    "node",
+    "backend",
+    "workflow",
+    "mcp"
+  ],
+  "author": "Langflow Team",
+  "license": "MIT",
+  "type": "commonjs"
+}
