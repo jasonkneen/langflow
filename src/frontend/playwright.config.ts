@@ -32,7 +32,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: `http://localhost:${PORT || 3000}/`,
+    baseURL: `http://localhost:${PORT || 5173}/`,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
@@ -102,24 +102,18 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command:
-        "uv run uvicorn --factory langflow.main:create_app --host 127.0.0.1 --port 7860 --loop asyncio",
-      port: 7860,
-      env: {
-        LANGFLOW_DATABASE_URL: "sqlite:///./temp",
-        LANGFLOW_AUTO_LOGIN: "true",
-      },
-      stdout: "ignore",
-
+      command: "cd ../node-backend && npm start",
+      port: 8000,
       reuseExistingServer: true,
       timeout: 120 * 1000,
     },
     {
-      command: "npm start",
-      port: PORT || 3000,
+      command: "npm run dev",
+      port: PORT || 5173,
       env: {
-        VITE_PROXY_TARGET: "http://127.0.0.1:7860",
+        VITE_PROXY_TARGET: "http://127.0.0.1:8000",
       },
+      reuseExistingServer: true,
     },
   ],
 });

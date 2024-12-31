@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ./src/node-backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - langflow-network
+
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://backend:8000/api/v1
+    depends_on:
+      - backend
+    networks:
+      - langflow-network
+
+networks:
+  langflow-network:
+    driver: bridge

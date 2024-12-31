@@ -1,16 +1,22 @@
-FROM node:20-alpine as frontend_build
-ARG BACKEND_URL
+FROM node:18-alpine
+
+# Set working directory
 WORKDIR /app
 
-COPY ./package.json ./package-lock.json ./tsconfig.json ./vite.config.ts ./index.html ./tailwind.config.js ./postcss.config.js ./prettier.config.js /app/
+# Copy package files first for better layer caching
+COPY package*.json ./
+
+# Install dependencies
 RUN npm install
-COPY ./src /app/src
+
+# Copy the rest of the frontend files
+COPY . .
+
+# Build the frontend
 RUN npm run build
 
-FROM nginx
-COPY --from=frontend_build /app/build/ /usr/share/nginx/html
-COPY /nginx.conf /etc/nginx/conf.d/default.conf
-COPY start-nginx.sh /start-nginx.sh
-RUN chmod +x /start-nginx.sh
-ENV BACKEND_URL=$BACKEND_URL
-CMD ["/start-nginx.sh"]
+# Expose the frontend port
+EXPOSE 5173
+
+# Start the development server
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
