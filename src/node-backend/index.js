@@ -4,15 +4,7 @@ const path = require("path");
 const app = express();
 
 // CORS configuration middleware for local development
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  }),
-);
-
-// Handle preflight requests
-app.options("*", cors());
+app.use(cors());
 
 // Handle preflight requests
 app.options("*", cors());
