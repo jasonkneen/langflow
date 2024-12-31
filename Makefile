@@ -1,12 +1,7 @@
 .PHONY: all init format_backend format_frontend format lint build build_frontend install_frontend run_frontend run_backend dev help tests coverage clean_python_cache clean_npm_cache clean_all
 
 # Configurations
-VERSION=$(shell grep "^version" pyproject.toml | sed 's/.*\"\(.*\)\"$$/\1/')
-DOCKERFILE=docker/build_and_push.Dockerfile
-DOCKERFILE_BACKEND=docker/build_and_push_backend.Dockerfile
-DOCKERFILE_FRONTEND=docker/frontend/build_and_push_frontend.Dockerfile
-DOCKER_COMPOSE=docker_example/docker-compose.yml
-PYTHON_REQUIRED=$(shell grep '^requires-python[[:space:]]*=' pyproject.toml | sed -n 's/.*"\([^"]*\)".*/\1/p')
+VERSION=1.0.0
 RED=\033[0;31m
 NC=\033[0m # No Color
 GREEN=\033[0;32m
@@ -329,50 +324,7 @@ ifdef restore
 endif
 
 
-docker_build: dockerfile_build clear_dockerimage ## build DockerFile
 
-docker_build_backend: dockerfile_build_be clear_dockerimage ## build Backend DockerFile
-
-docker_build_frontend: dockerfile_build_fe clear_dockerimage ## build Frontend Dockerfile
-
-dockerfile_build:
-	@echo 'BUILDING DOCKER IMAGE: ${DOCKERFILE}'
-	@docker build --rm \
-		-f ${DOCKERFILE} \
-		-t langflow:${VERSION} .
-
-dockerfile_build_be: dockerfile_build
-	@echo 'BUILDING DOCKER IMAGE BACKEND: ${DOCKERFILE_BACKEND}'
-	@docker build --rm \
-		--build-arg LANGFLOW_IMAGE=langflow:${VERSION} \
-		-f ${DOCKERFILE_BACKEND} \
-		-t langflow_backend:${VERSION} .
-
-dockerfile_build_fe: dockerfile_build
-	@echo 'BUILDING DOCKER IMAGE FRONTEND: ${DOCKERFILE_FRONTEND}'
-	@docker build --rm \
-		--build-arg LANGFLOW_IMAGE=langflow:${VERSION} \
-		-f ${DOCKERFILE_FRONTEND} \
-		-t langflow_frontend:${VERSION} .
-
-clear_dockerimage:
-	@echo 'Clearing the docker build'
-	@if docker images -f "dangling=true" -q | grep -q '.*'; then \
-		docker rmi $$(docker images -f "dangling=true" -q); \
-	fi
-
-docker_compose_up: docker_build docker_compose_down
-	@echo 'Running docker compose up'
-	docker compose -f $(DOCKER_COMPOSE) up --remove-orphans
-
-docker_compose_down:
-	@echo 'Running docker compose down'
-	docker compose -f $(DOCKER_COMPOSE) down || true
-
-dcdev_up:
-	@echo 'Running docker compose up'
-	docker compose -f docker/dev.docker-compose.yml down || true
-	docker compose -f docker/dev.docker-compose.yml up --remove-orphans
 
 lock_base:
 	cd src/backend/base && uv lock
