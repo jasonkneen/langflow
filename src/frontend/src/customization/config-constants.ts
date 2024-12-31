@@ -2,11 +2,7 @@ export const BASENAME = "";
 export const PORT = 3000;
 export const PROXY_TARGET = "http://127.0.0.1:7860";
 export const API_ROUTES = ["^/api/v1/", "/health"];
-export const BASE_URL_API = "https://langflow-node-backend-tunnel-qcwqkg20.devinapps.com/api/v1/";
-export const API_AUTH = {
-  username: 'user',
-  password: '990ae4614d5a31ece370727bb3174e45'
-};
+export const BASE_URL_API = "http://localhost:8000/api/v1/";
 export const HEALTH_CHECK_URL = "/health_check";
 export const DOCS_LINK = "https://docs.langflow.org";
 

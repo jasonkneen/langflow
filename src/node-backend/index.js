@@ -1,49 +1,63 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
-const basicAuth = require('basic-auth');
 const app = express();
 
-// Authentication middleware
-function authMiddleware(req, res, next) {
-  const user = basicAuth(req);
-  if (!user || user.name !== 'user' || user.pass !== '990ae4614d5a31ece370727bb3174e45') {
-    res.set('WWW-Authenticate', 'Basic realm="Restricted Area"');
-    return res.status(401).send({ error: 'Unauthorized' });
-  }
-  next();
-}
-
-// Middleware
+// CORS configuration middleware for local development
 app.use(cors({
-  origin: '*',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['WWW-Authenticate']
+  origin: 'http://localhost:5173',
+  credentials: true
 }));
+
+// Handle preflight requests
+app.options('*', cors());
+
+// Handle preflight requests
+app.options('*', cors());
+
 app.use(express.json());
 
-// Apply auth middleware to /api routes
-app.use('/api', authMiddleware);
-
-
-
-// Serve static files from the public directory
-const staticPath = path.join(__dirname, 'public');
-console.log('Static files path:', staticPath);
-app.use(express.static(staticPath));
-
-// Handle React routing, return all requests to React app
-app.get('*', function(req, res, next) {
-  console.log('Handling request for path:', req.path);
-  if (req.path.startsWith('/api')) {
-    return next();
+// Handle React routes by serving index.html for non-API requests
+app.use((req, res, next) => {
+  if (!req.path.startsWith('/api')) {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  } else {
+    next();
   }
-  const indexPath = path.join(staticPath, 'index.html');
-  console.log('Serving index.html from:', indexPath);
-  res.sendFile(indexPath);
 });
+
+// Serve static files with proper MIME types and security headers
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res, filePath) => {
+    // Set proper MIME types with charset
+    if (filePath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    } else if (filePath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css; charset=utf-8');
+    } else if (filePath.endsWith('.svg')) {
+      res.setHeader('Content-Type', 'image/svg+xml; charset=utf-8');
+    } else if (filePath.endsWith('.html')) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    } else if (filePath.endsWith('.png')) {
+      res.setHeader('Content-Type', 'image/png');
+    } else if (filePath.endsWith('.jpg') || filePath.endsWith('.jpeg')) {
+      res.setHeader('Content-Type', 'image/jpeg');
+    }
+    
+    // Security and caching headers
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; img-src 'self' data: blob:; font-src 'self' data:;");
+  },
+  index: 'index.html',
+  fallthrough: true,
+  dotfiles: 'ignore',
+  etag: true,
+  lastModified: true
+}));
 
 // Base API path
 const API_BASE = "/api/v1";
@@ -251,7 +265,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 3001; // Match the frontend config port
+const PORT = process.env.PORT || 8000; // Local development port
 app.listen(PORT, () => {
   console.log(`Node.js backend running on port ${PORT}`);
 });

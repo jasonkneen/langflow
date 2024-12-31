@@ -15,12 +15,8 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api/v1': {
-        target: 'https://langflow-node-backend-tunnel-qcwqkg20.devinapps.com',
-        changeOrigin: true,
-        secure: false,
-        headers: {
-          'Authorization': 'Basic ' + Buffer.from('user:990ae4614d5a31ece370727bb3174e45').toString('base64')
-        }
+        target: 'http://localhost:8000',
+        changeOrigin: true
       }
     }
   }
