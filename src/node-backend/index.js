@@ -6,7 +6,7 @@ const app = express();
 // Middleware
 app.use((req, res, next) => {
   // Basic auth middleware
-  const auth = {user: 'user', password: 'c202cd3deb91633fb5483a37b9d7e0ad'};
+  const auth = {user: 'user', password: 'd85f131ca9292ff559b9f941a96a3374'};
   const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
   const [user, password] = Buffer.from(b64auth, 'base64').toString().split(':');
 
