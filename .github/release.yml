@@ -29,6 +29,18 @@ changelog:
       description: Changes to tests
       labels:
         - test
+    - title: 📦 Dependencies
+      description: Updates to dependencies
+      labels:
+        - dependencies
+    - title: 🔧 Configuration Changes
+      description: Changes to configuration files
+      labels:
+        - config
+    - title: 🧪 Experimental Features
+      description: Experimental features and prototypes
+      labels:
+        - experimental
     - title: Others
       description: Other changes
       labels:

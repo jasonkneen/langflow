@@ -237,3 +237,41 @@ There are some files that change without you having made changes:
 * `uv.lock` and `src/frontend/package-lock.json` files can be modified by `make` targets; changes should not be committed by individual contributors.
    * You can exclude these from consideration in git: `git update-index --assume-unchanged uv.lock src/frontend/package-lock.json`
    * You can re-include these from consideration in git: `git update-index --no-assume-unchanged uv.lock src/frontend/package-lock.json`
+
+## Troubleshooting Tips
+
+Here are some common issues and their solutions:
+
+### Issue: Backend service not starting
+
+**Solution:** Ensure that all dependencies are installed correctly. Run `make install_backend` to reinstall the backend dependencies.
+
+### Issue: Frontend service not starting
+
+**Solution:** Ensure that all dependencies are installed correctly. Run `make install_frontend` to reinstall the frontend dependencies.
+
+### Issue: Changes not reflecting in the UI
+
+**Solution:** Ensure that both the backend and frontend services are running. If the issue persists, try restarting both services.
+
+### Issue: Pre-commit hooks not working
+
+**Solution:** Ensure that the pre-commit hooks are installed correctly. Run `uv run pre-commit install` to reinstall the hooks.
+
+### Issue: Tests failing
+
+**Solution:** Ensure that all dependencies are installed correctly. Run `make install_backend` to reinstall the backend dependencies. If the issue persists, try running the tests individually to identify the problem.
+
+### Issue: Files changing without making changes
+
+**Solution:** Some files may change due to formatting or other automated processes. You can exclude these files from consideration in git using the following commands:
+
+```bash
+git update-index --assume-unchanged uv.lock src/frontend/package-lock.json
+```
+
+To re-include these files, use the following commands:
+
+```bash
+git update-index --no-assume-unchanged uv.lock src/frontend/package-lock.json
+```

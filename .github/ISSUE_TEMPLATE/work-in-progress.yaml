@@ -56,3 +56,21 @@ body:
       placeholder: "Describe how you plan to implement this feature or improvement."
     validations:
       required: false
+
+  - type: textarea
+    id: expected-outcome
+    attributes:
+      label: Expected Outcome
+      description: Describe the expected outcome of this feature or improvement.
+      placeholder: "What do you expect to achieve with this feature or improvement?"
+    validations:
+      required: false
+
+  - type: textarea
+    id: potential-impact
+    attributes:
+      label: Potential Impact
+      description: Describe the potential impact of this feature or improvement.
+      placeholder: "What could be the potential impact of this feature or improvement?"
+    validations:
+      required: false
