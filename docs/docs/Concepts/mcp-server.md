@@ -9,7 +9,7 @@ import Icon from "@site/src/components/icon";
 
 Langflow integrates with the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) as both an MCP server and an MCP client.
 This page describes how to use Langflow as an *MCP server*.
-For information about using Langflow as an *MCP client*, see the [MCP component](/components-tools#mcp-server).
+For information about using Langflow as an *MCP client*, see the [MCP connection component](/components-tools#mcp-connection).
 
 As an MCP server, Langflow exposes your flows as [tools](https://modelcontextprotocol.io/docs/concepts/tools) that [MCP clients](https://modelcontextprotocol.io/clients) can use use to take actions.
 
@@ -300,3 +300,50 @@ You can use the ngrok console output to monitor requests for your project's endp
 ```
 16:35:48.566 EDT GET /api/v1/mcp/project/fdbc12af-0dd4-43dc-b9ce-c324d1ce5cd1 200 OK
 ```
+
+## Troubleshooting MCP server
+
+If Claude for Desktop is not using your server's tools correctly, you may need to explicitly define the path to your local `uvx` or `npx` executable file in the `claude_desktop_config.json` configuration file.
+
+1. To find your UVX path, run `which uvx`.
+To find your NPX path, run `which npx`.
+
+2. Copy the path, and then replace `PATH_TO_UVX` or `PATH_TO_NPX` in your `claude_desktop_config.json` file.
+
+<Tabs>
+  <TabItem value="uvx" label="uvx" default>
+
+```json
+{
+  "mcpServers": {
+    "PROJECT_NAME": {
+      "command": "PATH_TO_UVX",
+      "args": [
+        "mcp-proxy",
+        "http://LANGFLOW_SERVER_ADDRESS/api/v1/mcp/project/PROJECT_ID/sse"
+      ]
+    }
+  }
+}
+```
+  </TabItem>
+
+  <TabItem value="npx" label="npx">
+
+```json
+{
+  "mcpServers": {
+    "PROJECT_NAME": {
+      "command": "PATH_TO_NPX",
+      "args": [
+        "-y",
+        "supergateway",
+        "--sse",
+        "http://LANGFLOW_SERVER_ADDRESS/api/v1/mcp/project/PROJECT_ID/sse"
+      ]
+    }
+  }
+}
+```
+  </TabItem>
+</Tabs>
