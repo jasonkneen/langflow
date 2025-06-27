@@ -5,7 +5,7 @@ slug: /components-memories
 
 # Memory components in Langflow
 
-Memory components store and retrieve chat messages by `session_id`.
+Memory components store and retrieve chat messages by [`session_id`](/session-id).
 
 They are distinct from vector store components, because they are built specifically for storing and retrieving chat messages from external databases.
 
@@ -13,11 +13,11 @@ Memory components provide access to their respective external databases **as mem
 
 ## Use a memory component in a flow
 
-This example flow stores and retrieves chat history from an **Astra DB Chat Memory** component with **Store Message** and **Chat Memory** components.
+This example flow stores and retrieves chat history from an **Astra DB Chat Memory** component with **Store Message** and **Message history** components.
 
 The **Store Message** helper component stores chat memories as [Data](/concepts-objects) objects, and the **Message History** helper component retrieves chat messages as [Data](/concepts-objects) objects or strings.
 
-![Sample Flow storing Chat Memory in AstraDB](/img/astra_db_chat_memory_rounded.png)
+![Sample Flow storing Message history in AstraDB](/img/astra_db_chat_memory_rounded.png)
 
 ## AstraDBChatMemory Component
 
@@ -34,7 +34,7 @@ This component creates an `AstraDBChatMessageHistory` instance, which stores and
 | token            | SecretString  | The authentication token for Astra DB access. Required. |
 | api_endpoint     | SecretString  | The API endpoint URL for the Astra DB service. Required. |
 | namespace        | String        | The optional namespace within Astra DB for the collection. |
-| session_id       | MessageText   | The chat session ID. Uses the current session ID if not provided. |
+| session_id       | MessageText   | The unique identifier for the chat session. Uses the current session ID if not provided. |
 
 **Outputs**
 
@@ -117,7 +117,7 @@ This component retrieves and stores chat messages from Redis.
 | username | Username | The Redis username. |
 | password | Password | The password for the username. |
 | key_prefix | Key prefix | The key prefix. |
-| session_id | Session ID | The session ID for the message. |
+| session_id | Session ID | The unique session identifier for the message. |
 
 **Outputs**
 
