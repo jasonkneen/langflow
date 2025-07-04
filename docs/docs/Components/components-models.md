@@ -17,11 +17,11 @@ Model components receive inputs and prompts for generating text, and the generat
 
 The model output can also be sent to the **Language Model** port and on to a **Parse Data** component, where the output can be parsed into structured [Data](/concepts-objects) objects.
 
-This example has the OpenAI model in a chatbot flow. For more information, see the [Basic prompting flow](/starter-projects-basic-prompting).
+This example has the OpenAI model in a chatbot flow. For more information, see the [Basic prompting flow](/basic-prompting).
 
 ![](/img/starter-flow-basic-prompting.png)
 
-## AI/ML API
+## AIML
 
 This component creates a ChatOpenAI model instance using the AIML API.
 
@@ -40,7 +40,6 @@ For more information, see [AIML documentation](https://docs.aimlapi.com/).
 | aiml_api_base | String | The base URL of the AIML API. Defaults to `https://api.aimlapi.com`. |
 | api_key | SecretString | The AIML API Key to use for the model. |
 | temperature | Float | Controls randomness in the output. Default: `0.1`. |
-| seed | Integer | Controls reproducibility of the job. |
 
 **Outputs**
 
@@ -66,10 +65,11 @@ For more information, see [Amazon Bedrock documentation](https://docs.aws.amazon
 | model_id | String | The ID of the Amazon Bedrock model to use. Options include various models. |
 | aws_access_key | SecretString | AWS Access Key for authentication. |
 | aws_secret_key | SecretString | AWS Secret Key for authentication. |
-| credentials_profile_name | String | Name of the AWS credentials profile to use (advanced). |
+| aws_session_token | SecretString | The session key for your AWS account.
+| credentials_profile_name | String | Name of the AWS credentials profile to use. |
 | region_name | String | AWS region name. Default: `us-east-1`. |
-| model_kwargs | Dictionary | Additional keyword arguments for the model (advanced). |
-| endpoint_url | String | Custom endpoint URL for the Bedrock service (advanced). |
+| model_kwargs | Dictionary | Additional keyword arguments for the model. |
+| endpoint_url | String | Custom endpoint URL for the Bedrock service. |
 
 **Outputs**
 
@@ -227,13 +227,13 @@ For more information, see the [Google Generative AI documentation](https://cloud
 
 This component generates text using Groq's language models.
 
-1. To use this component in a flow, connect it as a **Model** in a flow like the [Basic prompting flow](/starter-projects-basic-prompting), or select it as the **Model Provider** if you're using an **Agent** component.
+1. To use this component in a flow, connect it as a **Model** in a flow like the [Basic prompting flow](/basic-prompting), or select it as the **Model Provider** if you're using an **Agent** component.
 
 ![Groq component in a basic prompting flow](/img/component-groq.png)
 
 2. In the **Groq API Key** field, paste your Groq API key.
 The Groq model component automatically retrieves a list of the latest models.
-To refresh your list of models, click <Icon name="RefreshCw" aria-label="Refresh"/>.
+To refresh your list of models, click <Icon name="RefreshCw" aria-hidden="true"/> **Refresh**.
 3. In the **Model** field, select the model you want to use for your LLM.
 This example uses [llama-3.1-8b-instant](https://console.groq.com/docs/model/llama-3.1-8b-instant), which Groq recommends for real-time conversational interfaces.
 4. In the **Prompt** component, enter:
@@ -274,9 +274,9 @@ This component sends requests to the Hugging Face API to generate text using the
 
 The Hugging Face API is a hosted inference API for models hosted on Hugging Face, and requires a [Hugging Face API token](https://huggingface.co/docs/hub/security-tokens) to authenticate.
 
-In this example based on the [Basic prompting flow](/starter-projects-basic-prompting), the **Hugging Face API** model component replaces the **Open AI** model. By selecting different hosted models, you can see how different models return different results.
+In this example based on the [Basic prompting flow](/basic-prompting), the **Hugging Face API** model component replaces the **Open AI** model. By selecting different hosted models, you can see how different models return different results.
 
-1. Create a [Basic prompting flow](/starter-projects-basic-prompting).
+1. Create a [Basic prompting flow](/basic-prompting).
 
 2. Replace the **OpenAI** model component with a **Hugging Face API** model component.
 
@@ -542,8 +542,8 @@ To use this component in a flow, connect Langflow to your locally running Ollama
 
 1. In the Ollama component, in the **Base URL** field, enter the address for your locally running Ollama server.
 This value is set as the `OLLAMA_HOST` environment variable in Ollama.
-The default base URL is `http://127.0.0.1:11434`.
-2. To refresh the server's list of models, click <Icon name="RefreshCw" aria-label="Refresh"/>.
+The default base URL is `http://localhost:11434`.
+2. To refresh the server's list of models, click <Icon name="RefreshCw" aria-hidden="true"/> **Refresh**.
 3. In the **Model Name** field, select a model. This example uses `llama3.2:latest`.
 4. Connect the **Ollama** model component to a flow. For example, this flow connects a local Ollama server running a Llama 3.2 model as the custom model for an [Agent](/components-agents) component.
 

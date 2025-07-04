@@ -11,10 +11,11 @@ import {
 import { useCustomNavigate } from "@/customization/hooks/use-custom-navigate";
 import useDeleteFlow from "@/hooks/flows/use-delete-flow";
 import DeleteConfirmationModal from "@/modals/deleteConfirmationModal";
+import ExportModal from "@/modals/exportModal";
 import FlowSettingsModal from "@/modals/flowSettingsModal";
 import useAlertStore from "@/stores/alertStore";
-import useFlowsManagerStore from "@/stores/flowsManagerStore";
 import { FlowType } from "@/types/flow";
+import { downloadFlow } from "@/utils/reactflowUtils";
 import { swatchColors } from "@/utils/styleUtils";
 import { cn, getNumberFromString } from "@/utils/utils";
 import { useEffect, useState } from "react";
@@ -42,6 +43,7 @@ const ListComponent = ({
   const setErrorData = useAlertStore((state) => state.setErrorData);
   const { folderId } = useParams();
   const [openSettings, setOpenSettings] = useState(false);
+  const [openExportModal, setOpenExportModal] = useState(false);
   const isComponent = flowData.is_component ?? false;
 
   const { getIcon } = useGetTemplateStyle(flowData);
@@ -85,6 +87,15 @@ const ListComponent = ({
       ? parseInt(flowData.gradient)
       : getNumberFromString(flowData.gradient ?? flowData.id)) %
     swatchColors.length;
+
+  const handleExport = () => {
+    if (flowData.is_component) {
+      downloadFlow(flowData, flowData.name, flowData.description);
+      setSuccessData({ title: `${flowData.name} exported successfully` });
+    } else {
+      setOpenExportModal(true);
+    }
+  };
 
   const [icon, setIcon] = useState<string>("");
 
@@ -145,9 +156,9 @@ const ListComponent = ({
           </div>
 
           <div className="flex min-w-0 flex-col justify-start">
-            <div className="line-clamp-1 flex min-w-0 items-baseline truncate max-md:flex-col">
+            <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
               <div
-                className="flex truncate pr-2 text-sm font-semibold max-md:w-full"
+                className="flex min-w-0 flex-shrink truncate text-sm font-semibold"
                 data-testid={`flow-name-div`}
               >
                 <span
@@ -157,14 +168,11 @@ const ListComponent = ({
                   {flowData.name}
                 </span>
               </div>
-              <div className="item-baseline flex text-xs text-muted-foreground">
-                Edited {timeElapsed(flowData.updated_at)} ago
+              <div className="flex min-w-0 flex-shrink text-xs text-muted-foreground">
+                <span className="truncate">
+                  Edited {timeElapsed(flowData.updated_at)} ago
+                </span>
               </div>
-            </div>
-            <div className="overflow-hidden text-mmd text-muted-foreground">
-              <span className="block max-w-[110ch] truncate">
-                {flowData.description}
-              </span>
             </div>
           </div>
         </div>
@@ -193,18 +201,15 @@ const ListComponent = ({
               <DropdownComponent
                 flowData={flowData}
                 setOpenDelete={setOpenDelete}
+                handleExport={handleExport}
                 handleEdit={() => {
                   setOpenSettings(true);
-                }}
-                handlePlaygroundClick={() => {
-                  // handlePlaygroundClick();
                 }}
               />
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </Card>
-
       {openDelete && (
         <DeleteConfirmationModal
           open={openDelete}
@@ -214,11 +219,15 @@ const ListComponent = ({
           note={!flowData.is_component ? "and its message history" : ""}
         />
       )}
+      <ExportModal
+        open={openExportModal}
+        setOpen={setOpenExportModal}
+        flowData={flowData}
+      />
       <FlowSettingsModal
         open={openSettings}
         setOpen={setOpenSettings}
         flowData={flowData}
-        details
       />
     </>
   );
